@@ -1,0 +1,5 @@
+Miscellaneous MINIX3 related code.
+
+
+The first project is about automated installation of MINIX on qemu
+see projects/autoinstall/README

@@ -1,0 +1,6 @@
+#
+#artifacts downloaded or created 
+#
+*.img
+*.bz2
+*.iso

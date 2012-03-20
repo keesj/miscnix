@@ -1,0 +1,25 @@
+The scripts in this directory perform an automated install of
+MINIX R3.2.0 on a qemu instance. it "uses" the qemu curses
+feature to screen scape the display and use the expect program
+to interact with the system.
+
+The main goal currently is to perform an automated install
+for test automation purposes.
+
+Running:
+	type make
+
+After that you can start the image using 
+	qemu -hda minix.base.8g.img
+
+
+@TODO:
+* Improve the expect scipt to allow passing of arguments.
+* Perform automated building of system packages. The image is 
+currently 8G and this is large enough to install pkgsrc
+* Add some automated tests for the fun of it.
+* Add more testing
+* The current system currently uses the qemu curses to interact 
+with. way better would be to make the serial line the main 
+console. I did not figure out how to do this in the kernel and 
+bootloader.

@@ -1,0 +1,128 @@
+#!/usr/bin/expect -f
+#
+# Script to perform unattended install of minix on qemu
+#
+#
+# required: qemu , expect and minix_R3.2.0-116fcea.iso in the current directory
+# sha1sum 127e79c76538b8066dbcf549b246be1f22a986e7
+#
+set timeout 30
+
+
+# Remove the previous install
+exec rm -rf minix.tmp.img
+
+# Create a new empty raw qemu image
+exec qemu-img create minix.tmp.img 8G
+
+
+# Spawn qemu using the curses front-end and start interacting with it
+spawn qemu -hda minix.tmp.img -cdrom minix_R3.2.0-116fcea.iso -boot d -curses 
+
+#pass past the bootloader
+expect "1. Regular MINIX 3" {
+	send "1\n"
+} 
+
+#wait for the kernel to be booted and a shell to be spawned
+expect "minix login:" {
+	send "root\n"
+}
+
+expect "#" {
+	send "setup\n"
+}
+
+
+#expect
+#Welcome to the MINIX 3 setup script.  This script will guide you in setting up  
+#MINIX on your machine.  Please consult the manual for detailed instructions.    
+#                                                                                                                       
+#Note 1: If the screen blanks, hit CTRL+F3 to select "software scrolling".       
+#Note 2: If things go wrong then hit CTRL+C to abort and start over.             
+#Note 3: Default answers, like [y], can simply be chosen by hitting ENTER.       
+#Note 4: If you see a colon (:) then you should hit ENTER to continue.
+
+expect "Note 4: If you see a colon (:) then you should hit ENTER to continue." {
+	send "\n"
+}
+
+# Keyboard type? [us-std]
+# TODO Fix escape sequence . how does this work in TCL?
+expect "Keyboard type? " {
+	send "\n"
+}
+# Press ENTER for automatic mode, or type 'expert':                               
+# TODO Fix escape sequence 
+expect "Press ENTER for automatic mode, or type " {
+	send "\n"
+}
+
+#
+#expect "--- Substep 3.1: Select a disk to install MINIX 3 ---------------------" {}
+
+#Enter the disk number to use: [0]
+expect "Enter the disk number to use" {
+	send "\n"
+}
+
+#Enter the region number to use or type 'delete':  [0]                           
+expect "Enter the region number to use or type" {
+	send "\n"
+}
+
+#--- Substep 3.3: Confirm your choices ---------------------------------        
+#
+#This is the point of no return.  You have selected to install MINIX 3           
+#into region 0 of disk /dev/c0d0.  Please confirm that you want                  
+#to use this selection to install MINIX 3.                                       
+#
+#Are you sure you want to continue?  Please enter 'yes' or 'no':
+expect "Are you sure you want to continue" {
+	send "yes\n"
+}
+#How big do you want your /home to be in MB (0-1623) ? [324]     
+expect "How big do you want your /home to be" {
+	send "\n"
+}
+
+# 324 MB Ok? [Y]                                                                  
+expect "MB Ok?" {
+	send "\n"
+}
+#Block size in kilobytes? [4]       
+expect "Block size in kilobytes?" {
+	send "\n"
+}
+set timeout 600
+# Ethernet card?
+expect "Ethernet card?" {
+	send "\n"
+}
+#Configure network using DHCP or manually?                                       
+#
+# 1. Automatically using DHCP                                                     
+# 2. Manually                                                                     
+#
+# Configure method? [1]  
+expect "Configure method?" {
+	send "\n"
+}
+
+#Please type 'shutdown' to exit MINIX 3 and reboot. To boot into your new        
+#system, you might have to remove installation media.                            
+# 
+# This ends the MINIX 3 setup script.  After booting your newly set up system,    
+# you can run the test suites as indicated in the setup manual.  You also         
+# may want to take care of local configuration, such as securing your system      
+# with a password.  Please consult the usage manual for more information.         
+# 
+# 
+# #
+
+expect "with a password.  Please consult the usage manual for more information." {
+	send "shutdown\n"
+}
+expect "Choose an option; RETURN for default; SPACE to stop countdown."
+
+                                                                                                                       
