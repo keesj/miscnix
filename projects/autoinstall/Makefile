@@ -2,8 +2,6 @@ default:minix.base.8g.img
 
 minix_R3.2.0-116fcea.iso.bz2:
 	wget http://www.minix3.org/iso/minix_R3.2.0-116fcea.iso.bz2
-	md5sum -c minix_R3.2.0-116fcea.iso.bz2.md5
-
 
 #
 # unzip the bz2
