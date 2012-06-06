@@ -98,7 +98,7 @@ expect {
 #
 # installing takes quite some time
 #
-set timeout 500
+set timeout 1000
 expect -re $
 send "/tmp/runcmd.sh pkgin -y install vim cscope openssh gcc44 scmgit\n"
 expect {
