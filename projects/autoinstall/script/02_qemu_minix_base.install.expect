@@ -17,7 +17,8 @@ exec qemu-img create minix.tmp.img 8G
 
 
 # Spawn qemu using the curses front-end and start interacting with it
-spawn qemu -hda minix.tmp.img -cdrom minix_R3.2.0-116fcea.iso -boot d -curses 
+#spawn qemu -hda minix.tmp.img -cdrom minix_R3.2.0-116fcea.iso -boot d -curses 
+spawn qemu-system-i386 -hda minix.tmp.img -cdrom minix_R3.2.0-116fcea.iso -boot d -curses 
 
 #pass past the bootloader
 expect "1. Regular MINIX 3" {

@@ -1,0 +1,113 @@
+#!/usr/bin/expect -f
+#
+# Script to perform unattended install of minix on qemu
+#
+#
+# required: qemu , expect and minix_R3.2.0-116fcea.iso in the current directory
+# sha1sum 127e79c76538b8066dbcf549b246be1f22a986e7
+#
+
+
+# Spawn qemu using the curses front-end and start interacting with it
+#spawn qemu -hda minix.tmp.img -cdrom minix_R3.2.0-116fcea.iso -boot d -curses 
+spawn qemu-system-i386 -m 512 -hda minix.postinst.8g.tmp.img -curses 
+
+set timeout 5
+
+puts "Performing post install"
+#
+#--- Welcome to MINIX 3. This is the boot monitor. ---
+expect "\\-\\-\\- Welcome to MINIX 3. This is the boot monitor. \\-\\-\\-"
+
+#
+#Check we have a normal boot loader
+#1. Start MINIX 3
+expect "1. Start MINIX 3"
+
+expect "Choose an option; RETURN for default; SPACE to stop countdown." {
+	send "\n"
+}
+
+
+# expect the boot to take very long as in the default image the network
+# driver is not properly configured
+set timeout 200
+
+#
+# the fist boot fails with a malloc problem in dhcpd
+#Starting networking: dhcpd nonamed.
+#assertion "(char *) NextSlot(p) <= next" failed: file "minix/malloc.c", line 245
+#, function "free"
+#PM: coredump signal 6 for 128 / dhcpd
+# dhcpd     36668 0x806b5f1 0x806b49f 0x80836bd 0x80754b5 0x8063b50 0x80751d8 0x80
+#65352 0x804eb6a 0x804ec55 0x804bf98 0x804c2a1 0x8048602 0x804813b 0x80480b5 0x1
+#
+for {} 1 {} {
+	puts "fix dhcp loop"
+	expect {
+		#minix login: 
+		#but later if it worked ip-address login:
+		"login:" { 
+			send "root\n" 
+			break
+		}
+		"dirty, performing fsck" {puts "resetting timeout as the file system in dirty" }
+		#Starting networking: dhcpd nonamed.
+		"nonamed." {
+			#send a break signal
+			sleep 1
+			send "\003"  
+		}
+		timeout {
+			puts "Failed to catch login command"
+			exit 1
+		}
+	}
+}
+
+set timeout 20
+#
+#
+#
+# netconf
+# MINIX 3 currently supports the following Ethernet cards. PCI cards detected
+# by MINIX are marked with *. Please choose:
+# 
+# 0.   No Ethernet card (no networking)
+# 1.   3Com 501 or 3Com 509 based card
+# 2.   Realtek 8029 based card (also emulated by Qemu)
+# 3.   NE2000, 3com 503 or WD based card (also emulated by Bochs)
+# 4.   Attansic/Atheros L2 FastEthernet
+# 5.   DEC Tulip 21140A in VirtualPC
+# 6. * Intel PRO/1000 Gigabit
+# 7.   Intel PRO/100
+# 8.   AMD LANCE (also emulated by VMWare and VirtualBox)
+# 9.   Realtek 8139 based card
+# 10.   Realtek 8169 based card
+# 11.   Different Ethernet card (no networking)
+# 
+# Ethernet card? [6]
+
+expect "#" {
+	send "netconf\n"
+	expect "Ethernet card?" {
+		send "\n"
+	}
+
+	# Configure network using DHCP or manually?
+	#
+	# 1. Automatically using DHCP
+	# 2. Manually
+	#
+	# Configure method? [1] ^[[V
+	expect "Configure method?" {
+		send "\n"
+	}
+	expect "You might have to reboot for the changes to take effect." {
+		puts "Network card reconfigured, reboot"
+	}
+	
+}
+#shutdown
+send "shutdown\n"
+expect "Choose an option; RETURN for default; SPACE to stop countdown."

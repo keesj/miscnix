@@ -16,3 +16,11 @@ minix_R3.2.0-116fcea.iso.bz2:
 minix.base.8g.img:script/02_qemu_minix_base.install.expect minix_R3.2.0-116fcea.iso
 	script/02_qemu_minix_base.install.expect
 	mv minix.tmp.img minix.base.8g.img
+
+minix.postinst.8g.img:minix.base.8g.img
+	rm -f minix.postinst.8g.tmp.img minix.postinst.8g.img
+	cp minix.base.8g.img minix.postinst.8g.tmp.img
+	post-install/01-reconfigure-net.expect
+	post-install/02-setup.expect
+	mv minix.postinst.8g.tmp.img minix.postinst.8g.img
+	

@@ -1,0 +1,121 @@
+#!/usr/bin/expect -f
+#
+spawn qemu-system-i386 -m 512 -hda minix.postinst.8g..tmp.img -curses 
+
+set timeout 5
+
+puts "Performing post install"
+#
+#--- Welcome to MINIX 3. This is the boot monitor. ---
+expect "\\-\\-\\- Welcome to MINIX 3. This is the boot monitor. \\-\\-\\-"
+
+#
+#Check we have a normal boot loader
+#1. Start MINIX 3
+expect "1. Start MINIX 3"
+
+expect "Choose an option; RETURN for default; SPACE to stop countdown." {
+	send "\n"
+}
+
+
+# expect the boot to take very long as in the default image the network
+# driver is not properly configured
+set timeout 60
+
+#
+for {} 1 {} {
+	puts "Waiting for a prompt"
+	expect {
+		#minix login: 
+		#but later if it worked ip-address login:
+		"login:" { 
+			send "root\n" 
+			break
+		}
+		"dirty, performing fsck" {puts "resetting timeout as the file system in dirty" }
+		timeout {
+			puts "Failed to catch login command"
+			exit 1
+		}
+	}
+}
+
+set timeout 5
+expect "#"
+expect -re $
+
+
+#
+# put a run command in /tmp that echoes RESULT-OK or RESULT-FAIL based on the 
+# return value of the command launched
+#
+set send_human {.1 .3 1 .05 2}
+# the shell can't handle all this output at once so sending it as "human"
+send -h "echo '#/bin/sh' > /tmp/runcmd.sh ; echo 'if $* ; then echo RESULT-OK ; else echo RESULT-FAIL ; fi' >> /tmp/runcmd.sh ; chmod +x /tmp/runcmd.sh\n"
+expect "#"
+
+
+#read the full buffer so the next line does not match RESULT-FAIL
+set timeout 60
+expect -re $
+send "/tmp/runcmd.sh pkgin update\n" 
+expect {
+	"RESULT-FAIL" { 
+		puts "Failed to update package database"
+		interact
+		exit 1
+	}
+	"RESULT-OK" { 
+		puts "Updated the package database"
+	}
+	timeout {
+		puts "Failed to update pkg database"
+		interact
+		exit 1
+	}
+}
+	
+set timeout 120
+expect -re $
+send "/tmp/runcmd.sh pkgin upgrade\n" 
+expect {
+	"RESULT-FAIL" { 
+		puts "Failed to upgrade packages"
+		interact
+		exit 1
+	}
+	"RESULT-OK" { 
+		puts "Updated the package upgraded"
+	}
+	timeout {
+		puts "Failed to update pkg packages"
+		interact
+		exit 1
+	}
+}
+
+#
+# installing takes quite some time
+#
+set timeout 500
+expect -re $
+send "/tmp/runcmd.sh pkgin -y install vim cscope openssh gcc44 scmgit\n"
+expect {
+	"RESULT-FAIL" { 
+		puts "Failed to install needed packages"
+		interact
+		exit 1
+	}
+	"RESULT-OK" { 
+		puts "Updated the needed packages"
+	}
+	timeout {
+		puts "Failed to install selected packages"
+		interact
+		exit 1
+	}
+}
+#shutdown
+send "shutdown\n"
+expect "Choose an option; RETURN for default; SPACE to stop countdown."
