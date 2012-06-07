@@ -4,7 +4,7 @@ spawn qemu-system-i386 -m 512 -hda minix.postinst.8g.tmp.img -curses
 
 set timeout 5
 
-puts "Performing post install"
+puts "Performing post install keesj"
 #
 #--- Welcome to MINIX 3. This is the boot monitor. ---
 expect "\\-\\-\\- Welcome to MINIX 3. This is the boot monitor. \\-\\-\\-"
@@ -19,9 +19,9 @@ expect "Choose an option; RETURN for default; SPACE to stop countdown." {
 }
 
 
-# expect the boot to take very long as in the default image the network
-# driver is not properly configured
-set timeout 60
+# when this script is stated the previous one probably has installed openssh
+# and ssh keys will be generated
+set timeout 120
 
 #
 for {} 1 {} {
@@ -43,7 +43,6 @@ for {} 1 {} {
 
 set timeout 5
 expect "#"
-expect -re $
 
 
 #
@@ -51,71 +50,56 @@ expect -re $
 # return value of the command launched
 #
 set send_human {.1 .3 1 .05 2}
+expect -re $
 # the shell can't handle all this output at once so sending it as "human"
 send -h "echo '#/bin/sh' > /tmp/runcmd.sh ; echo 'if $* ; then echo RESULT-OK ; else echo RESULT-FAIL ; fi' >> /tmp/runcmd.sh ; chmod +x /tmp/runcmd.sh\n"
 expect "#"
 
 
+#
+# Try and read password from a file called ~/bin/.minix.passwd
+# if that is not present inform the user we are using a default
+# password. (This becomes nasty when we have ssh installed)
+#
+set passwd "dev"
+if { [file exists "~/bin/.minix.passwd" ] == 1} {
+        puts "**Reading password from file **"
+        set fd [open "~/bin/.minix.passwd" "r"]
+        set passwd [read $fd]
+        close $fd
+} else {
+        puts "**WARNING using default password **"
+}
+
+
 #read the full buffer so the next line does not match RESULT-FAIL
 set timeout 60
 expect -re $
-send "/tmp/runcmd.sh pkgin update\n" 
-expect {
-	"RESULT-FAIL" { 
-		puts "Failed to update package database"
-		interact
-		exit 1
-	}
-	"RESULT-OK" { 
-		puts "Updated the package database"
-	}
-	timeout {
-		puts "Failed to update pkg database"
-		interact
-		exit 1
+# passwd
+#Changing local password for root.
+#New password:
+send -h "/tmp/runcmd.sh passwd\n"
+for {} 1 {} {
+	puts "Passwd loop"
+	expect {
+		"New password:" { 
+			send -h "$passwd\n"
+		}
+		"Retype new password:" { 
+			send -h "$passwd\n"
+		}
+		"RESULT-OK" { 
+			puts "Updated password"
+			break;
+		}
+		timeout {
+			puts "Failed to set password"
+			interact
+			exit 1
+		}
 	}
 }
-	
-set timeout 120
 expect -re $
-send "/tmp/runcmd.sh pkgin upgrade\n" 
-expect {
-	"RESULT-FAIL" { 
-		puts "Failed to upgrade packages"
-		interact
-		exit 1
-	}
-	"RESULT-OK" { 
-		puts "Updated the package upgraded"
-	}
-	timeout {
-		puts "Failed to update pkg packages"
-		interact
-		exit 1
-	}
-}
-
-#
-# installing takes quite some time
-#
-set timeout 1000
-expect -re $
-send "/tmp/runcmd.sh pkgin -y install vim cscope openssh gcc44 scmgit\n"
-expect {
-	"RESULT-FAIL" { 
-		puts "Failed to install needed packages"
-		interact
-		exit 1
-	}
-	"RESULT-OK" { 
-		puts "Updated the needed packages"
-	}
-	timeout {
-		puts "Failed to install selected packages"
-		interact
-		exit 1
-	}
-}
 set timeout 20
 #shutdown
 send "shutdown\n"

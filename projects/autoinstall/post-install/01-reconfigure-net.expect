@@ -53,7 +53,7 @@ for {} 1 {} {
 		}
 		"dirty, performing fsck" {puts "resetting timeout as the file system in dirty" }
 		#Starting networking: dhcpd nonamed.
-		"nonamed." {
+		"nonamed" {
 			#send a break signal
 			sleep 1
 			send "\003"  
