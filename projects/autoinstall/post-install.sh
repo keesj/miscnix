@@ -15,9 +15,10 @@ Things that still need doing by hand:
 * copy ssh shared key
 * Create .ssh/config
 Host gitsrv
-HosstName oeeo.few.vu.nl
+HostName oeeo.few.vu.nl
 User git
-IdentityFile ~/.ssh/shared
+IdentityFile ~/.ssh/minix-root-shared
+
 * git config --global user.name "Kees Jongenburger"
 * git config --global user.email "kees.jongenburger@gmail.com"
 * create dot git config and addremote git@gitsrv:minix-usb
