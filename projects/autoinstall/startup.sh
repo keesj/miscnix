@@ -14,6 +14,8 @@ fi
 if [ ! -f usbdisk.img ] 
 then
 	#create a "usb disk"
+	#this part is really optional usbdisk.img is added to qemu as a usb base disk
+	#and is added here to allow testing of the dde usb stack 
 	echo "creating usb disk image"
 	dd if=/dev/zero of=usbdisk.img bs=1M seek=1000 count=1
 	
@@ -24,6 +26,11 @@ USB_DISK_PARAMS="-drive id=my_usb_disk,file=usbdisk.img,if=none  -device usb-sto
 QEMU_PARAMS=$USB_DISK_PARAMS
 
 
+#
+# Try and find free tcp ports to run a qemu instance. This part is most probably not 
+# portable as it assumes output from netstat
+#tcp        0      0 0.0.0.0:9418            0.0.0.0:*               LISTEN     
+#
 for i in `seq 0 1 10`
 do
 	if  ! netstat -na  | grep "tcp[^6].*LISTEN"  | awk '{print $4}' | sed "s,.*:,,g" | grep $((4444 + $i)) 1>/dev/null
