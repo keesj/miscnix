@@ -24,4 +24,6 @@ minix.postinst.8g.img:minix.base.8g.img
 	post-install/02-setup.expect
 	post-install/03-keesj.expect
 	mv minix.postinst.8g.tmp.img minix.postinst.8g.img
+	echo "now start the image using the startup.sh script"
+	echo "and scp and run post-install.sh to finish installation"
 	
