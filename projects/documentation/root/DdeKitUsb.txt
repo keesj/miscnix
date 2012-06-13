@@ -83,22 +83,48 @@ Device manager (DEVMAN)
 
 Devman is a device manager who's main goal is to enable hot-plugging of
 hardware. Based on events from USBD and a configuration file it will create
-device nodes and start or stop USB class drivers
+device nodes and start or stop USB class drivers.
+
+There are two parts to devman. One is a MINIX3 service and the second one is a userland daemon. 
 
 
-Features added to MINIX 3
---------------------------
+Startup sequence for mass storage
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The project adds new features to the MINIX operating system:
- * A model to integrate Linux drivers.
- * A system to handle hotplugging of hardware. 
- * An USB host implementation that can be used to access USB devices.  
+The initialization is as follow
 
-Runtime dependencies
-~~~~~~~~~~~~~~~~~~~~
+* The RC script starts the devman
+* The RC script start devmand
+* devmand read it's configuration and starts listening for events from devman
+* Usbd is started via the extended RC scripts that look in /usr/pkg/etc/rc.d.
+* The stub driver inside usbd notifies devman about new usb devices found
+* devman exports this information over sysfs and devmand reads about a new
+  configurations
+* devman starts the mass_storage service based on it's configuration
+* the mass_storage service binds to the interface over the virtual host 
+  controller
+* After some time the device is ready to be mounted.
 
-The first component to start is the device manager. The second component to
-start is the USB daemo. It connects to the device manager to register changes
-to the bus. Starting and stopping of driver happens by the device manager.
+image:img/minix3_mass_storage_init.png[Startup sequence for mass storage]
+
+Shutdown sequence
+~~~~~~~~~~~~~~~~~
+
+The shutdown sequence is the following
+* umount usb file systems
+* stop devmand ( also stops the running services like usb_storage)
+* stop usbd
+* umount /sys
+* stop devman
+
+
+Running and developing
+----------------------
+
+The device manager is located in the MINIX 3 sources but the remaining components are lotacted outside of this source tree and are referred from the pkgsrc tree. To get the code working it should be enough to reboot after having gone to /usr/pkgsrc/minix/dde-linux26-usb-drivers and and ran bmake install.
+
+To develop you might need we suggest your first run bmake install and after that run bmake build-env in either the de-linux26-usb-drivers or dde-linux26 directory. running bmake && bmake install will directly install the libraries in the correct location.
+
+The code for dde-linux26 and dde-linux26-usb-driver is hosted on git.minix3.org
 
 
