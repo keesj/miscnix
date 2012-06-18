@@ -110,4 +110,12 @@ expect "#" {
 }
 #shutdown
 send "shutdown\n"
-expect "Choose an option; RETURN for default; SPACE to stop countdown."
+expect  {
+	"Choose an option; RETURN for default; SPACE to stop countdown." { 
+		puts "\nInstall worked\n"
+	}
+	"Press Ctrl-B to configure iPXE" {
+		puts "\nInstall worked\n"
+		
+	}
+}

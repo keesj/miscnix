@@ -124,6 +124,13 @@ expect "Configure method?" {
 expect "with a password.  Please consult the usage manual for more information." {
 	send "shutdown\n"
 }
-expect "Choose an option; RETURN for default; SPACE to stop countdown."
-
-                                                                                                                       
+set timeout 30
+expect  {
+	"Choose an option; RETURN for default; SPACE to stop countdown." { 
+		puts "\nInstall worked\n"
+	}
+	"Press Ctrl-B to configure iPXE" {
+		puts "\nInstall worked\n"
+		
+	}
+}

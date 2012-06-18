@@ -6,17 +6,37 @@ to interact with the system.
 The main goal currently is to perform an automated install
 for test automation purposes.
 
-Running:
-	type make
+Dependencies:
+	expect
+	qemu-kvm
+Targets:
+  minix.base.8g.img to download and create a basic installation 
+                       of the system.
 
-After that you can start the image using 
-	qemu -hda minix.base.8g.img
+  minix.postinst.8g.img to create an up-to-date image based on the
+                        base image that will have a few issues fix
+			ed and a password set.
+
+  Getting to an "up-to-date" installation still requires you to copy
+the post-install.sh script to the MINIX instance and run it.
+
+It will 
+* checkout the most recent versions of pkgsrc and the MINIX 3
+* build a new clang with shared libraries support
+* install the newest sources using make clean/world.
+
+After that you can start the image using the startup.sh command
+in this directory can be use to start the image. I usually use the
+following ~/.ssh/config
+#
+Host minix
+HostName localhost
+User root
+Port 2222
 
 
 @TODO:
 * Improve the expect scipt to allow passing of arguments.
-* Perform automated building of system packages. The image is 
-currently 8G and this is large enough to install pkgsrc
 * Add some automated tests for the fun of it.
 * Add more testing
 * The current system currently uses the qemu curses to interact 
