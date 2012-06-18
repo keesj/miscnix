@@ -65,8 +65,27 @@ set -x
 #exit
 	cd /usr/src
 	git pull
+	
+	## first update to the post shared library era
+	## and make world
+	git checkout ade7dc8ded18e69bcb4908663cb226e7cc88f44f
 	#see docs updating 20120402 
 	make -C usr.bin/genassym install
+	make clean world
+
+
+	#
+	# Update to the post cross building era
+	#
+	git checkout master
+	# 20120608:
+	#  New install and mk files require the following steps:
+	cp /usr/src/share/mk/*.mk /usr/share/mk
+	cd /usr/src
+	make -C usr.bin/xinstall all
+	cp usr.bin/xinstall/xinstall /usr/bin/install
+	rm /bin/install
+
 	make clean world
 )
 
