@@ -22,8 +22,7 @@ then
 fi
 USB_DISK_PARAMS="-drive id=my_usb_disk,file=usbdisk.img,if=none  -device usb-storage,drive=my_usb_disk "
 
-
-QEMU_PARAMS=$USB_DISK_PARAMS
+QEMU_PARAMS="-usb $USB_DISK_PARAMS"
 
 
 #
@@ -46,6 +45,37 @@ then
 	exit 1
 fi
 
+
+#
+# For multiboot (not functional yet) missing mfs? and qemu not properly starting
+#
+MULTIBOOT_KERNEL_CMD_LINE="rootdevname=c0d0p0s0"
+MULTIBOOT_MODULE_NAMES="
+	mod01_ds \
+	mod02_rs \
+	mod03_pm \
+	mod04_sched \
+	mod05_vfs \
+	mod06_memory \
+	mod07_log \
+	mod08_tty \
+	mod09_ext2 \
+	mod10_vm \
+	mod11_pfs \
+	mod12_init \
+	"
+MULTIBOOT_MODULES=""
+for i in ${MULTIBOOT_MODULE_NAMES}
+do
+	MULTIBOOT_MODULES="$MULTIBOOT_MODULES,${i} arg=$MULTIBOOT_KERNEL_CMD_LINE"
+done
+MULTIBOOT_MODULES=${MULTIBOOT_MODULES:1}
+MULTIBOOT_PARAMS="-kernel kernel -initrd \"$MULTIBOOT_MODULES\""
+
+#QEMU_PARAMS="$QEMU_PARAMS -append \"$MULTIBOOT_KERNEL_CMD_LINE\""
+#QEMU_PARAMS="$QEMU_PARAMS $MULTIBOOT_PARAMS"
+
+
 SSH_PORT=$((2222 + $INSTANCE_NUMBER))
 MONITOR_PORT=$((4444 + $INSTANCE_NUMBER))
 #
@@ -56,7 +86,7 @@ MONITOR_PORT=$((4444 + $INSTANCE_NUMBER))
 # also start the monitor on port 4444 so we can telnet to it.
 echo "starting ${DISK_IMAGE} qemu instance ${INSTANCE_NUMBER} with ssh port ${SSH_PORT} and monitor on port ${MONITOR_PORT}"
 sleep 2
-qemu-system-i386 -localtime -redir tcp:$SSH_PORT::22 -m 1024 -hda $DISK_IMAGE -curses \
+qemu-system-i386 -localtime -redir tcp:$SSH_PORT::22 -m 2024 -hda $DISK_IMAGE -curses \
 	-monitor telnet::$MONITOR_PORT,server,nowait \
-	-enable-kvm -usb  $QEMU_PARAMS
+	-enable-kvm  $QEMU_PARAMS
 
