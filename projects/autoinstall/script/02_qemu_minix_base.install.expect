@@ -8,17 +8,37 @@
 #
 set timeout 30
 
+set image minix.tmp.img
+set cdrom minix-cdrom.iso
+if { $argc > 0 } {
+	puts "Parsing arguments"
+	set counter 0
+	while {$counter < $argc} {
+		if { [lindex $argv $counter] == "--image" }  {
+			set counter [expr {$counter +1}]
+			set image [lindex $argv $counter]
+			
+		}
+		if { [lindex $argv $counter] == "--cdrom" }  {
+			set counter [expr {$counter +1}]
+			set cdrom [lindex $argv $counter]
+			
+		}
+		set counter [expr {$counter +1}]
+	}
+}
+
 
 # Remove the previous install
-exec rm -rf minix.tmp.img
+exec rm -rf $image
 
 # Create a new empty raw qemu image
-exec qemu-img create minix.tmp.img 8G
+exec qemu-img create $image 8G
 
 
 # Spawn qemu using the curses front-end and start interacting with it
 #spawn qemu -hda minix.tmp.img -cdrom minix_R3.2.0-116fcea.iso -boot d -curses 
-spawn qemu-system-i386 -hda minix.tmp.img -cdrom minix_R3.2.0-116fcea.iso -boot d -curses 
+spawn qemu-system-i386 -hda $image -cdrom $cdrom -boot d -curses 
 
 #pass past the bootloader
 expect "1. Regular MINIX 3" {
@@ -97,7 +117,26 @@ expect "Block size in kilobytes?" {
 }
 set timeout 600
 # Ethernet card?
-expect "Ethernet card?" {
+#--- Step 8: Select your Ethernet chip ---------------------------------
+#
+#MINIX 3 currently supports the following Ethernet cards. PCI cards detected
+#by MINIX are marked with *. Please choose:
+#
+#0.   No Ethernet card (no networking)
+#1.   3Com 501 or 3Com 509 based card
+#2.   Realtek 8029 based card (also emulated by Qemu)
+#3.   NE2000, 3com 503 or WD based card (also emulated by Bochs)
+#4.   Attansic/Atheros L2 FastEthernet
+#5.   DEC Tulip 21140A in VirtualPC
+#6. * Intel PRO/1000 Gigabit
+#7.   Intel PRO/100
+#8.   AMD LANCE (also emulated by VMWare and VirtualBox)
+#9.   Realtek 8139 based card
+#10.   Realtek 8169 based card
+#11.   Different Ethernet card (no networking)
+#
+#Ethernet card? [6] 
+expect "Ethernet card" {
 	send "\n"
 }
 #Configure network using DHCP or manually?                                       

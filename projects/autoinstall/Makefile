@@ -1,29 +1,26 @@
-default:minix.base.8g.img
-
-minix_R3.2.0-116fcea.iso.bz2:
-	wget http://www.minix3.org/iso/minix_R3.2.0-116fcea.iso.bz2
+default:minix.dev.8g.img
 
 #
-# unzip the bz2
+# Download the isp
 #
-%.iso:%.iso.bz2
-	bunzip2 -k $< 
-
+minix-dev.iso:
+	wget http://www.minix3.org/iso/minix3_2_1_ide_20120620_ace9a62.iso.bz2
+	bunzip2 minix3_2_1_ide_20120620_ace9a62.iso.bz2
+	mv  minix3_2_1_ide_20120620_ace9a62.iso minix-dev.iso
 
 #
+# Perform installation to harddisk
 #
-# @TODO make the script more configurable
-minix.base.8g.img:script/02_qemu_minix_base.install.expect minix_R3.2.0-116fcea.iso
-	script/02_qemu_minix_base.install.expect
-	mv minix.tmp.img minix.base.8g.img
+minix.dev.8g.img:script/02_qemu_minix_base.install.expect minix-dev.iso
+	script/02_qemu_minix_base.install.expect -- --image $@ --cdrom minix-dev.iso
 
-minix.postinst.8g.img:minix.base.8g.img
-	rm -f minix.postinst.8g.tmp.img minix.postinst.8g.img
-	cp minix.base.8g.img minix.postinst.8g.tmp.img
-	post-install/01-reconfigure-net.expect
-	post-install/02-setup.expect
-	post-install/03-password.expect
-	mv minix.postinst.8g.tmp.img minix.postinst.8g.img
-	echo "now start the image using the startup.sh script"
-	echo "and scp and run post-install.sh to finish installation"
+#
+# Perform generic post installation
+#
+minix.dev-postinst.8g.img:minix.dev.8g.img
+	cp $< $@
+	post-install/02-setup.expect -- --image $@
+	post-install/03-password.expect -- --image $@
+	#echo "now start the image using the startup.sh script"
+	#echo "and scp and run post-install.sh to finish installation"
 	
