@@ -6,7 +6,7 @@
 # required: qemu , expect and minix_R3.2.0-116fcea.iso in the current directory
 # sha1sum 127e79c76538b8066dbcf549b246be1f22a986e7
 #
-set timeout 30
+set timeout 60
 
 set image minix.tmp.img
 set cdrom minix-cdrom.iso
@@ -29,6 +29,11 @@ if { $argc > 0 } {
 }
 
 
+proc last_chance {} {
+	puts "\nLast chance\n"
+	interact
+}
+
 # Remove the previous install
 exec rm -rf $image
 
@@ -41,19 +46,21 @@ exec qemu-img create $image 8G
 spawn qemu-system-i386 -hda $image -cdrom $cdrom -boot d -curses 
 
 #pass past the bootloader
-expect "1. Regular MINIX 3" {
-	send "1\n"
-} 
+expect {
+	"1. Regular MINIX 3"  { send "1\n"  }
+	timeout last_chance
+}
 
 #wait for the kernel to be booted and a shell to be spawned
-expect "minix login:" {
-	send "root\n"
+expect {
+	"minix login:"  { send "root\n" }
+	timeout last_chance
 }
 
-expect "#" {
-	send "setup\n"
+expect { 
+	"#" { send "setup\n" }
+	timeout last_chance
 }
-
 
 #expect
 #Welcome to the MINIX 3 setup script.  This script will guide you in setting up  
@@ -64,32 +71,40 @@ expect "#" {
 #Note 3: Default answers, like [y], can simply be chosen by hitting ENTER.       
 #Note 4: If you see a colon (:) then you should hit ENTER to continue.
 
-expect "Note 4: If you see a colon (:) then you should hit ENTER to continue." {
-	send "\n"
+expect {
+	"Note 4: If you see a colon (:) then you should hit ENTER to continue." { send "\n" }
+	timeout last_chance
 }
 
 # Keyboard type? [us-std]
 # TODO Fix escape sequence . how does this work in TCL?
-expect "Keyboard type? " {
-	send "\n"
+expect {
+	"Keyboard type? " { send "\n" }
+	timeout last_chance
 }
+
 # Press ENTER for automatic mode, or type 'expert':                               
 # TODO Fix escape sequence 
-expect "Press ENTER for automatic mode, or type " {
-	send "\n"
+expect {
+	"Press ENTER for automatic mode, or type " { send "\n" }
+	timeout last_chance
 }
+	
+
 
 #
 #expect "--- Substep 3.1: Select a disk to install MINIX 3 ---------------------" {}
 
 #Enter the disk number to use: [0]
-expect "Enter the disk number to use" {
-	send "\n"
+expect {
+	"Enter the disk number to use" { send "\n" }
+	timeout last_chance
 }
 
 #Enter the region number to use or type 'delete':  [0]                           
-expect "Enter the region number to use or type" {
-	send "\n"
+expect {
+	"Enter the region number to use or type" { send "\n" }
+	timeout last_chance
 }
 
 #--- Substep 3.3: Confirm your choices ---------------------------------        
@@ -99,23 +114,34 @@ expect "Enter the region number to use or type" {
 #to use this selection to install MINIX 3.                                       
 #
 #Are you sure you want to continue?  Please enter 'yes' or 'no':
-expect "Are you sure you want to continue" {
-	send "yes\n"
+expect {
+	"Are you sure you want to continue" { send "yes\n" }
+	timeout last_chance
 }
 #How big do you want your /home to be in MB (0-1623) ? [324]     
-expect "How big do you want your /home to be" {
-	send "\n"
+expect {
+	"How big do you want your /home to be" { send "\n" }
+	timeout last_chance
 }
 
 # 324 MB Ok? [Y]                                                                  
-expect "MB Ok?" {
-	send "\n"
+expect {
+	"MB Ok?" { send "\n" }
+	timeout last_chance
 }
 #Block size in kilobytes? [4]       
-expect "Block size in kilobytes?" {
-	send "\n"
+expect {
+	"Block size in kilobytes?" { send "\n" }
+	 timeout last_chance
 }
+
 set timeout 600
+
+expect {
+	"Step 8" { puts "\nStep 8\n" }
+	 timeout last_chance
+}
+
 # Ethernet card?
 #--- Step 8: Select your Ethernet chip ---------------------------------
 #
@@ -136,8 +162,9 @@ set timeout 600
 #11.   Different Ethernet card (no networking)
 #
 #Ethernet card? [6] 
-expect "Ethernet card" {
-	send "\n"
+expect {
+	"Ethernet card?" { send "\n"}
+	 timeout last_chance
 }
 #Configure network using DHCP or manually?                                       
 #
@@ -145,8 +172,9 @@ expect "Ethernet card" {
 # 2. Manually                                                                     
 #
 # Configure method? [1]  
-expect "Configure method?" {
-	send "\n"
+expect {
+	"Configure method?" { send "\n" }
+	 timeout last_chance
 }
 
 #Please type 'shutdown' to exit MINIX 3 and reboot. To boot into your new        
@@ -160,9 +188,12 @@ expect "Configure method?" {
 # 
 # #
 
-expect "with a password.  Please consult the usage manual for more information." {
-	send "shutdown\n"
+expect {
+	"with a password.  Please consult the usage manual for more information." { send "shutdown\n" }
+	 timeout last_chance
 }
+	
+
 set timeout 30
 expect  {
 	"Choose an option; RETURN for default; SPACE to stop countdown." { 
@@ -170,6 +201,6 @@ expect  {
 	}
 	"Press Ctrl-B to configure iPXE" {
 		puts "\nInstall worked\n"
-		
 	}
+	timeout last_chance
 }

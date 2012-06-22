@@ -19,6 +19,11 @@ if { $argc > 0 } {
 	}
 }
 
+proc last_chance {} {
+	puts "\nLast chance\n"
+	interact
+}
+
 spawn qemu-system-i386 -m 512 -hda $image -curses 
 
 set timeout 5
@@ -55,7 +60,7 @@ for {} 1 {} {
 		"dirty, performing fsck" {puts "resetting timeout as the file system in dirty" }
 		timeout {
 			puts "Failed to catch login command"
-			exit 1
+			last_chance
 		}
 	}
 }
@@ -71,7 +76,7 @@ expect -re $
 #
 set send_human {.1 .3 1 .05 2}
 # the shell can't handle all this output at once so sending it as "human"
-send -h "echo '#/bin/sh' > /tmp/runcmd.sh ; echo 'if $* ; then echo RESULT-OK ; else echo RESULT-FAIL ; fi' >> /tmp/runcmd.sh ; chmod +x /tmp/runcmd.sh\n"
+send -h "echo '#!/bin/sh' > /tmp/runcmd.sh ; echo 'if $* ; then echo RESULT-OK ; else echo RESULT-FAIL ; fi' >> /tmp/runcmd.sh ; chmod +x /tmp/runcmd.sh\n"
 expect "#"
 
 
@@ -90,8 +95,7 @@ expect {
 	}
 	timeout {
 		puts "Failed to update pkg database"
-		interact
-		exit 1
+		last_chance
 	}
 }
 	
@@ -101,16 +105,14 @@ send "/tmp/runcmd.sh pkgin upgrade\n"
 expect {
 	"RESULT-FAIL" { 
 		puts "Failed to upgrade packages"
-		interact
-		exit 1
+		last_chance
 	}
 	"RESULT-OK" { 
 		puts "Updated the package upgraded"
 	}
 	timeout {
 		puts "Failed to update pkg packages"
-		interact
-		exit 1
+		last_chance
 	}
 }
 
@@ -123,16 +125,14 @@ send "/tmp/runcmd.sh pkgin -y install vim cscope openssh gcc44 scmgit\n"
 expect {
 	"RESULT-FAIL" { 
 		puts "Failed to install needed packages"
-		interact
-		exit 1
+		last_chance
 	}
 	"RESULT-OK" { 
 		puts "Updated the needed packages"
 	}
 	timeout {
 		puts "Failed to install selected packages"
-		interact
-		exit 1
+		last_chance
 	}
 }
 set timeout 20
