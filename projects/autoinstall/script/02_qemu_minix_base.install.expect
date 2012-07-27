@@ -1,15 +1,12 @@
 #!/usr/bin/expect -f
 #
-# Script to perform unattended install of minix on qemu
-#
-#
-# required: qemu , expect and minix_R3.2.0-116fcea.iso in the current directory
-# sha1sum 127e79c76538b8066dbcf549b246be1f22a986e7
+# Script to perform an unattended install of minix on qemu
 #
 set timeout 60
 
 set image minix.tmp.img
 set cdrom minix-cdrom.iso
+set imgsize 8G
 if { $argc > 0 } {
 	puts "Parsing arguments"
 	set counter 0
@@ -24,13 +21,22 @@ if { $argc > 0 } {
 			set cdrom [lindex $argv $counter]
 			
 		}
+		if { [lindex $argv $counter] == "--imgsize" }  {
+			set counter [expr {$counter +1}]
+			set cdrom [lindex $argv $counter]
+			
+		}
 		set counter [expr {$counter +1}]
 	}
 }
 
+set send_human {.1 .3 1 .05 2}
+
+set step "initial" 
 
 proc last_chance {} {
-	puts "\nLast chance\n"
+	global step
+	puts "\n(Step $step):Last chance\n"
 	interact
 }
 
@@ -38,7 +44,7 @@ proc last_chance {} {
 exec rm -rf $image
 
 # Create a new empty raw qemu image
-exec qemu-img create $image 8G
+exec qemu-img create $image $imgsize
 
 
 # Spawn qemu using the curses front-end and start interacting with it
@@ -46,19 +52,24 @@ exec qemu-img create $image 8G
 spawn qemu-system-i386 -hda $image -cdrom $cdrom -boot d -curses 
 
 #pass past the bootloader
+set step "bootloader"
 expect {
-	"1. Regular MINIX 3"  { send "1\n"  }
+	"1. Regular MINIX 3"  { send -h "1\n"  }
 	timeout last_chance
 }
+
+
 
 #wait for the kernel to be booted and a shell to be spawned
+set step "login"
 expect {
-	"minix login:"  { send "root\n" }
+	"minix login:"  { send -h "root\n" }
 	timeout last_chance
 }
 
+set step "setup"
 expect { 
-	"#" { send "setup\n" }
+	"#" { send -h "setup\n" }
 	timeout last_chance
 }
 
@@ -71,22 +82,25 @@ expect {
 #Note 3: Default answers, like [y], can simply be chosen by hitting ENTER.       
 #Note 4: If you see a colon (:) then you should hit ENTER to continue.
 
+set step "start of setup"
 expect {
-	"Note 4: If you see a colon (:) then you should hit ENTER to continue." { send "\n" }
+	"Note 4: If you see a colon (:) then you should hit ENTER to continue." { send -h "\n" }
 	timeout last_chance
 }
 
 # Keyboard type? [us-std]
 # TODO Fix escape sequence . how does this work in TCL?
+set step "setup keyboard slection"
 expect {
-	"Keyboard type? " { send "\n" }
+	"Keyboard type? " { send -h "\n" }
 	timeout last_chance
 }
 
 # Press ENTER for automatic mode, or type 'expert':                               
 # TODO Fix escape sequence 
+set step "setup automatic selection"
 expect {
-	"Press ENTER for automatic mode, or type " { send "\n" }
+	"Press ENTER for automatic mode, or type " { send -h "\n" }
 	timeout last_chance
 }
 	
@@ -95,15 +109,16 @@ expect {
 #
 #expect "--- Substep 3.1: Select a disk to install MINIX 3 ---------------------" {}
 
+set step "setup 3.2 disk selection"
 #Enter the disk number to use: [0]
 expect {
-	"Enter the disk number to use" { send "\n" }
+	"Enter the disk number to use" { send -h "\n" }
 	timeout last_chance
 }
 
 #Enter the region number to use or type 'delete':  [0]                           
 expect {
-	"Enter the region number to use or type" { send "\n" }
+	"Enter the region number to use or type" { send -h "\n" }
 	timeout last_chance
 }
 
@@ -114,34 +129,57 @@ expect {
 #to use this selection to install MINIX 3.                                       
 #
 #Are you sure you want to continue?  Please enter 'yes' or 'no':
+set step "setup 3.3 confirm choices"
 expect {
-	"Are you sure you want to continue" { send "yes\n" }
+	"Are you sure you want to continue" { send -h "yes\n" }
 	timeout last_chance
 }
 #How big do you want your /home to be in MB (0-1623) ? [324]     
 expect {
-	"How big do you want your /home to be" { send "\n" }
+	"How big do you want your /home to be" { send -h "\n" }
 	timeout last_chance
 }
 
 # 324 MB Ok? [Y]                                                                  
 expect {
-	"MB Ok?" { send "\n" }
+	"MB Ok?" { send -h "\n" }
+	timeout last_chance
+}
+expect {
+	"Step 6" { }
 	timeout last_chance
 }
 #Block size in kilobytes? [4]       
 expect {
-	"Block size in kilobytes?" { send "\n" }
+	"Block size in kilobytes?" { send -h "\n" }
 	 timeout last_chance
 }
-
+  
 set timeout 600
-
-expect {
-	"Step 8" { puts "\nStep 8\n" }
-	 timeout last_chance
+set step "formatting disk"
+for {} 1 {} {
+	expect {
+		timeout last_chance
+		"Step 7" { 
+			break
+		}
+	}
 }
 
+
+set step "installing files"
+for {} 1 {} {
+	expect {
+		"Step 8" { 
+			puts "Exit for step 8\n"
+			break
+		}
+		-re "$" { }
+		timeout last_chance
+	}
+}
+
+puts "\nGrumble\n" 
 # Ethernet card?
 #--- Step 8: Select your Ethernet chip ---------------------------------
 #
@@ -162,8 +200,9 @@ expect {
 #11.   Different Ethernet card (no networking)
 #
 #Ethernet card? [6] 
+set step  "step 8 ethernet card"
 expect {
-	"Ethernet card?" { send "\n"}
+	"Ethernet card?" { send -h "\n"}
 	 timeout last_chance
 }
 #Configure network using DHCP or manually?                                       
@@ -173,8 +212,8 @@ expect {
 #
 # Configure method? [1]  
 expect {
-	"Configure method?" { send "\n" }
-	 timeout last_chance
+	"Configure method?" { send -h "\n" }
+	timeout last_chance
 }
 
 #Please type 'shutdown' to exit MINIX 3 and reboot. To boot into your new        
@@ -186,10 +225,10 @@ expect {
 # with a password.  Please consult the usage manual for more information.         
 # 
 # 
-# #
-
+# 
+set step  "shutdown"
 expect {
-	"with a password.  Please consult the usage manual for more information." { send "shutdown\n" }
+	"with a password.  Please consult the usage manual for more information." { send -h "\nshutdown\n" }
 	 timeout last_chance
 }
 	
