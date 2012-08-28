@@ -155,27 +155,28 @@ expect {
 	 timeout last_chance
 }
   
-set timeout 600
+set timeout 200
 set step "formatting disk"
 for {} 1 {} {
 	expect {
 		timeout last_chance
 		"Step 7" { 
+			puts "Found step 7\n"
 			break
 		}
 	}
 }
 
 
+set timeout 600
 set step "installing files"
 for {} 1 {} {
 	expect {
+		timeout last_chance
 		"Step 8" { 
 			puts "Exit for step 8\n"
 			break
 		}
-		-re "$" { }
-		timeout last_chance
 	}
 }
 
