@@ -14,14 +14,15 @@ fi
 if [ ! -f usbdisk.img ] 
 then
 	#create a "usb disk"
-	#this part is really optional usbdisk.img is added to qemu as a usb base disk
-	#and is added here to allow testing of the dde usb stack 
+	#this part is really optional usbdisk.img is added to qemu
+	#as a usb based disk and is added here to allow testing of 
+	#the dde usb stack .
 	echo "creating usb disk image"
 	dd if=/dev/zero of=usbdisk.img bs=1M seek=1000 count=1
 	
 fi
 USB_DISK_PARAMS="-drive id=my_usb_disk,file=usbdisk.img,if=none  -device usb-storage,drive=my_usb_disk "
-QEMU_PARAMS="-usb $USB_DISK_PARAMS"
+#QEMU_PARAMS="-usb $USB_DISK_PARAMS"
 
 
 #
@@ -45,18 +46,35 @@ then
 fi
 
 
+#
+# if the MULTIBOOT_SOURCE_DIR is given (and is a directory) copy the files to a
+# new directory called multiboot.
+#
+# Setup the qemu parameters to emable multiboot
+#
+
 if [ -n "$MULTIBOOT_SOURCE_DIR" -a -d "$MULTIBOOT_SOURCE_DIR" ]
 then
 	echo "Using multiboot (found directory)"
-	#
-	# For multiboot in qemu we need to give the modules as parameter to qemu in the 
-	# initrd argument. We need a comma separated list of items but also need to pass
-	# the kernel command line arguments to the modules.
+
+	# For multiboot in qemu we need to give the modules as parameter to
+	# qemu in the initrd argument. We need a comma separated list of items
+	# but also need to pass the kernel command line arguments to the
+	# modules.
+
 	MULTIBOOT_DEST_DIR=multiboot
 	rm -rf $MULTIBOOT_DEST_DIR
 	mkdir -p $MULTIBOOT_DEST_DIR
 	cp $MULTIBOOT_SOURCE_DIR/* $MULTIBOOT_DEST_DIR
 	for i in $MULTIBOOT_DEST_DIR/mod*.gz ; do gunzip $i ; done
+
+	#
+	# The modules initially don't have access to the kernel command line so
+	# we are forced to pass the kernel command line to all the modules.
+	# Failing to do so will for example result in the file system not being
+	# mounted because the root device name is unknown.
+	#
+
 	MULTIBOOT_KERNEL_CMD_LINE="rootdevname=c0d0p0s0"
 	MULTIBOOT_MODULE_NAMES="
 		mod01_ds \
@@ -87,16 +105,23 @@ fi
 
 SSH_PORT=$((2222 + $INSTANCE_NUMBER))
 MONITOR_PORT=$((4444 + $INSTANCE_NUMBER))
+
+# Currently 512 MB is needed to start with networking 1024 is needed to compile
+# clang....
 #
-# Currently 512 MB is needed to start with networking
-# 1024 is needed to compile clang....
-#
-# start qemu with port redirection so sshing to localhost 2222 will ssh into the qemu instance
-# also start the monitor on port 4444 so we can telnet to it.
+# start qemu with port redirection so sshing to localhost 2222 will ssh into
+# the qemu instance also start the monitor on port 4444 so we can telnet to it.
+
 echo "starting ${DISK_IMAGE} qemu instance ${INSTANCE_NUMBER} with ssh port ${SSH_PORT} and monitor on port ${MONITOR_PORT}"
 sleep 2
 
-cmd="qemu-system-i386 -curses -localtime -redir tcp:$SSH_PORT::22 -m 2024  $QEMU_PARAMS -monitor telnet::$MONITOR_PORT,server,nowait -enable-kvm  -hda $DISK_IMAGE"
+# The default network driver for qemu changed over time. At first The used
+# device was a Realtek 8139. Later they changed the default to e1000. To try
+# and use the previous driver uncomment the following line
+#
+#QEMU_PARAMS="$QEMU_PARAMS -net nic,model=rtl8139"
+
+cmd="qemu-system-i386 -curses -localtime -redir tcp:$SSH_PORT::22 -m 2048  $QEMU_PARAMS -monitor telnet::$MONITOR_PORT,server,nowait -enable-kvm  -hda $DISK_IMAGE"
 #
 # I don't actually know why I need the eval here ..
 echo $cmd
