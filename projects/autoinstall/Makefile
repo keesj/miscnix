@@ -20,7 +20,9 @@ minix.dev.8g.img:script/02_qemu_minix_base.install.expect minix-dev.iso
 minix.dev-postinst.8g.img:minix.dev.8g.img
 	cp $< $@
 	time post-install/02-setup.expect -- --image $@ 2>&1 | tee  $@.log
-	post-install/03-password.expect -- --image $@ 2>&1 | tee -a $@.log
+	time post-install/03-password.expect -- --image $@ 2>&1 | tee -a $@.log
 	#echo "now start the image using the startup.sh script"
 	#echo "and scp and run post-install.sh to finish installation"
 	
+clean:
+	rm -rf *.log *.img

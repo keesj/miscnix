@@ -155,7 +155,7 @@ expect {
 	 timeout last_chance
 }
   
-set timeout 200
+set timeout 2000
 set step "formatting disk"
 for {} 1 {} {
 	expect {
