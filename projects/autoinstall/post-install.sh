@@ -56,6 +56,7 @@ set -x
 	cd /usr/
 	make pkgsrc-create 
 )
+exit
 (
 #exit
 	cd /usr/pkgsrc/minix/clang29/
