@@ -125,10 +125,10 @@ echo "starting ${DISK_IMAGE} qemu instance ${INSTANCE_NUMBER} with ssh port ${SS
 sleep 2
 
 # The default network driver for qemu changed over time. At first The used
-# device was a Realtek 8139. Later they changed the default to e1000. To try
+# device was a Realtek 8139(rtl8139). Later they changed the default to e1000. To try
 # and use the previous driver uncomment the following line
 #
-#QEMU_PARAMS="$QEMU_PARAMS -net nic,model=rtl8139"
+#QEMU_PARAMS="$QEMU_PARAMS -net nic,model=e1000"
 
 cmd="qemu-system-i386 -curses -localtime -redir tcp:$SSH_PORT::22 -m 2048  $QEMU_PARAMS -monitor telnet::$MONITOR_PORT,server,nowait -hda $DISK_IMAGE"
 #
