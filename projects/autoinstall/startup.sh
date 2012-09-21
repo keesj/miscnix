@@ -106,6 +106,15 @@ fi
 SSH_PORT=$((2222 + $INSTANCE_NUMBER))
 MONITOR_PORT=$((4444 + $INSTANCE_NUMBER))
 
+# Test if we can use kvm 
+if [ -x /usr/sbin/kvm-ok ]
+then
+	if /usr/sbin/kvm-ok 2>&1 > /dev/null
+	then
+		QEMU_PARAMS="$QEMU_PARAMS -enable-kvm"
+	fi
+fi
+
 # Currently 512 MB is needed to start with networking 1024 is needed to compile
 # clang....
 #
@@ -121,7 +130,7 @@ sleep 2
 #
 #QEMU_PARAMS="$QEMU_PARAMS -net nic,model=rtl8139"
 
-cmd="qemu-system-i386 -curses -localtime -redir tcp:$SSH_PORT::22 -m 2048  $QEMU_PARAMS -monitor telnet::$MONITOR_PORT,server,nowait -enable-kvm  -hda $DISK_IMAGE"
+cmd="qemu-system-i386 -curses -localtime -redir tcp:$SSH_PORT::22 -m 2048  $QEMU_PARAMS -monitor telnet::$MONITOR_PORT,server,nowait -hda $DISK_IMAGE"
 #
 # I don't actually know why I need the eval here ..
 echo $cmd
