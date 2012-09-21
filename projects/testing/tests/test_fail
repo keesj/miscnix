@@ -1,0 +1,3 @@
+#!/bin/sh
+echo Great it fails
+exit 1
