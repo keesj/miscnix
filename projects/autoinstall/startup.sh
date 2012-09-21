@@ -25,6 +25,13 @@ USB_DISK_PARAMS="-drive id=my_usb_disk,file=usbdisk.img,if=none  -device usb-sto
 #QEMU_PARAMS="-usb $USB_DISK_PARAMS"
 
 
+port_unbound(){
+	if netstat -na  | grep "tcp[^6].*LISTEN"  | awk '{print $4}' | sed "s,.*:,,g" | grep $((4444 + $1)) 1>/dev/null
+	then
+		return 1
+	fi
+	return 0	
+}
 #
 # Try and find free tcp ports to run a qemu instance. This part is most probably not 
 # portable as it assumes output from netstat
@@ -32,7 +39,7 @@ USB_DISK_PARAMS="-drive id=my_usb_disk,file=usbdisk.img,if=none  -device usb-sto
 #
 for i in `seq 0 1 10`
 do
-	if  ! netstat -na  | grep "tcp[^6].*LISTEN"  | awk '{print $4}' | sed "s,.*:,,g" | grep $((4444 + $i)) 1>/dev/null
+	if  ! port_unbound $i
 	then
 		INSTANCE_NUMBER=$i
 		break
@@ -106,12 +113,25 @@ fi
 SSH_PORT=$((2222 + $INSTANCE_NUMBER))
 MONITOR_PORT=$((4444 + $INSTANCE_NUMBER))
 
+if ! port_unbound $SSH_PORT
+then
+	echo "SSH port $SSH_PORT already bound"
+	exit 1
+fi
+if ! port_unbound $MONITOR_PORT
+then
+	echo "Monitor port $MONITOR_PORT already bound"
+	exit 1
+fi
+
 # Test if we can use kvm 
 if [ -x /usr/sbin/kvm-ok ]
 then
 	if /usr/sbin/kvm-ok 2>&1 > /dev/null
 	then
 		QEMU_PARAMS="$QEMU_PARAMS -enable-kvm"
+	else
+		QEMU_PARAMS="$QEMU_PARAMS -disable-kvm"
 	fi
 fi
 
@@ -130,7 +150,7 @@ sleep 2
 #
 #QEMU_PARAMS="$QEMU_PARAMS -net nic,model=e1000"
 
-cmd="qemu-system-i386 -curses -localtime -redir tcp:$SSH_PORT::22 -m 2048  $QEMU_PARAMS -monitor telnet::$MONITOR_PORT,server,nowait -hda $DISK_IMAGE"
+cmd="qemu-system-i386 -curses -localtime -redir tcp:$SSH_PORT:127.0.0.1:22 -m 2048  $QEMU_PARAMS -monitor telnet::$MONITOR_PORT,server,nowait -hda $DISK_IMAGE"
 #
 # I don't actually know why I need the eval here ..
 echo $cmd
