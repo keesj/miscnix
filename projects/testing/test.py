@@ -14,6 +14,7 @@ class TestSequenceFunctions(unittest.TestCase):
 	self.assertEqual(self.value,0)
 
     def test_update_world(self):
+	self.value = os.system("rm -rf test-update.img")
 	self.value = os.system("cp test.img test-update.img")
 	self.value = os.system("./tests/update_world --image test-update.img")
 	self.assertEqual(self.value,0)
