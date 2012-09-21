@@ -25,8 +25,8 @@ USB_DISK_PARAMS="-drive id=my_usb_disk,file=usbdisk.img,if=none  -device usb-sto
 #QEMU_PARAMS="-usb $USB_DISK_PARAMS"
 
 
-port_unbound(){
-	if netstat -na  | grep "tcp[^6].*LISTEN"  | awk '{print $4}' | sed "s,.*:,,g" | grep $((4444 + $1)) 1>/dev/null
+port_bound(){
+	if netstat -na  | grep "tcp[^6].*LISTEN"  | awk '{print $4}' | sed "s,.*:,,g" | grep "$1\$" 1>/dev/null
 	then
 		return 1
 	fi
@@ -39,7 +39,7 @@ port_unbound(){
 #
 for i in `seq 0 1 10`
 do
-	if  ! port_unbound $i
+	if port_bound $((4444 + $i))
 	then
 		INSTANCE_NUMBER=$i
 		break
@@ -113,12 +113,12 @@ fi
 SSH_PORT=$((2222 + $INSTANCE_NUMBER))
 MONITOR_PORT=$((4444 + $INSTANCE_NUMBER))
 
-if ! port_unbound $SSH_PORT
+if ! port_bound $SSH_PORT
 then
 	echo "SSH port $SSH_PORT already bound"
 	exit 1
 fi
-if ! port_unbound $MONITOR_PORT
+if ! port_bound $MONITOR_PORT
 then
 	echo "Monitor port $MONITOR_PORT already bound"
 	exit 1
