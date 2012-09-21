@@ -150,7 +150,7 @@ sleep 2
 #
 #QEMU_PARAMS="$QEMU_PARAMS -net nic,model=e1000"
 
-cmd="qemu-system-i386 -curses -localtime -redir tcp:$SSH_PORT:127.0.0.1:22 -m 2048  $QEMU_PARAMS -monitor telnet::$MONITOR_PORT,server,nowait -hda $DISK_IMAGE"
+cmd="qemu-system-i386 -curses -localtime -redir tcp:$SSH_PORT::22 -m 2048  $QEMU_PARAMS -monitor telnet::$MONITOR_PORT,server,nowait -hda $DISK_IMAGE"
 #
 # I don't actually know why I need the eval here ..
 echo $cmd
