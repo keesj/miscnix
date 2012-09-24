@@ -111,20 +111,26 @@ set timeout 600
 expect -re $
 # passwd
 send -h "/tmp/runcmd.sh /root/world-update.sh\n"
-expect {
-	"RESULT-OK" { 
-		puts ""
-	}
-	"RESULT-FAIL" { 
-		puts "Test failed"
-		exit_strategy
-	}
-	timeout {
-		puts "Failed to run commad"
-		exit_strategy
+for {} 1 {} {
+	expect {
+		"RESULT-OK" { 
+			puts ""
+			break
+		}
+		"RESULT-FAIL" { 
+			puts "Test failed"
+			exit_strategy
+		}
+		"/" {
+		}
+		timeout {
+			puts "Failed to run command"
+			exit_strategy
+		}
 	}
 }
 expect -re $
+
 set timeout 20
 #shutdown
 send "shutdown\n"
