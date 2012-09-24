@@ -41,7 +41,7 @@ proc last_chance {} {
 	exit 1
 }
 
-spawn qemu-system-i386 -m 2048 -hda $image -curses -net nic,model=e1000 -net user
+spawn qemu-system-x86_64 -m 2048 -hda $image -curses -net nic,model=e1000 -net user
 
 
 
