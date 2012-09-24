@@ -45,6 +45,7 @@ spawn qemu-system-x86_64 -m 2048 -hda $image -curses -net nic,model=e1000 -net u
 
 
 
+stty raw
 #
 #--- Welcome to MINIX 3. This is the boot monitor. ---
 #expect "\\-\\-\\- Welcome to MINIX 3. This is the boot monitor. \\-\\-\\-"
