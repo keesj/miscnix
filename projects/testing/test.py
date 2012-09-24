@@ -19,10 +19,5 @@ class TestSequenceFunctions(unittest.TestCase):
 	self.value = os.system("./tests/update_world --image test-update.img")
 	self.assertEqual(self.value,0)
 
-    def test_test_fail(self):
-	self.value = os.system("./tests/test_fail")
-	self.assertEqual(self.value, 0)
-
-
 if __name__ == '__main__':
     unittest.main(testRunner=xmlrunner.XMLTestRunner(output='test-reports'))
