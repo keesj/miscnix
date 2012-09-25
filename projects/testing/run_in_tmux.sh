@@ -41,11 +41,12 @@ tail -f script.log | while read line
 do
 	if [ -f done ] 
 	then
-		#It might be a bit better to only kill the curr
+		#@TODO only kill the $current tail...
 		killall tail
 		exit
 	fi
 	echo $line
 done
+ret=`cat done`
 rm -rf script.log done
-exit `cat done`
+exit $ret
