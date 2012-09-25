@@ -78,7 +78,7 @@ tests = [
 	["interp.sh","testinterp.sh"],
   ]
 
-class TestSequense(unittest.TestCase):
+class PosixTests(unittest.TestCase):
     def setUp(self):
         os.system("rm -rf DIR*")
 
@@ -95,6 +95,6 @@ if __name__ == '__main__':
     for t in tests:
         test_name = 'test_%s' % t[0]
         test = test_generator(t[0], t[1])
-        setattr(TestSequense, test_name, test)
-    unittest.main()
-    #unittest.main(testRunner=xmlrunner.XMLTestRunner(output='test-reports'))
+        setattr(PosixTests, test_name, test)
+    #unittest.main()
+    unittest.main(testRunner=xmlrunner.XMLTestRunner(output='test-reports'))
