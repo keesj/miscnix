@@ -4,7 +4,7 @@ import os
 import unittest
 import xmlrunner
 
-class TestSequenceFunctions(unittest.TestCase):
+class BasicTests(unittest.TestCase):
     def setUp(self):
 	os.system("rm -rf test.img")
 	os.system("cp /opt/data/test.img test.img")

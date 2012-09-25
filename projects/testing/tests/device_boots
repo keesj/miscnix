@@ -127,6 +127,7 @@ send "shutdown\n"
 expect  {
 	"Choose an option; RETURN for default; SPACE to stop countdown." { 
 		puts "\nTest worked\n"
+		exit 0
 	}
 	"Press Ctrl-B to configure iPXE" {
 		puts "\nWorked\n"
