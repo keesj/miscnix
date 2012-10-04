@@ -8,7 +8,7 @@ MYSSH="sshpass -p dev ssh -p 8888 root@127.0.0.1 -o NoHostAuthenticationForLocal
 
 mkdir -p test-reports
 $MYSCP -r device/* root@127.0.0.1:/
-if $MYSSH "cd /usr/src/test ; make"
+$MYSSH "cd /usr/src/test ; make"
 if $MYSSH "cd /usr/src/test ; ./run.py"
 then
 	echo "some tests failed $?"
