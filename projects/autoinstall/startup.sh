@@ -11,16 +11,13 @@ then
 	. ./.settings
 fi
 
-if [ ! -f usbdisk.img ] 
-then
-	#create a "usb disk"
-	#this part is really optional usbdisk.img is added to qemu
-	#as a usb based disk and is added here to allow testing of 
-	#the dde usb stack .
-	echo "creating usb disk image"
-	dd if=/dev/zero of=usbdisk.img bs=1M seek=1000 count=1
-	
-fi
+#
+# If you want to test the usb stack for mass storage you can do this
+# by uncommenting the following QEMU_PARAMS line.
+# Make sure you create a dist image either with qemu-img or from the command
+# line using
+#
+#  dd if=/dev/zero of=usbdisk.img bs=1M seek=1000 count=1
 USB_DISK_PARAMS="-drive id=my_usb_disk,file=usbdisk.img,if=none  -device usb-storage,drive=my_usb_disk "
 #QEMU_PARAMS="-usb $USB_DISK_PARAMS"
 
