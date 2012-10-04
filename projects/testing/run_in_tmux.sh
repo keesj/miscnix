@@ -9,6 +9,9 @@
 # needed to the reading process can wait for
 # input and check for the exitence of a generated
 # done file
+#
+# @TODO use tmp files for the scripts
+#
 echo "#!/bin/sh
 dir=`pwd`
 $@  2>&1  > \${dir}/script.log
