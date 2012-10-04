@@ -1,0 +1,167 @@
+#!/usr/bin/expect -f
+#
+
+#
+# Parse arguments
+#
+set image minix.postinst.8g.tmp.img
+set send_human {.1 .3 1 .05 2}
+set passwd "dev"
+set script "dev"
+set timeout 5
+
+if { $argc > 0 } {
+	set counter 0
+	while {$counter < $argc} {
+		if { [lindex $argv $counter] == "--image" }  {
+			set counter [expr {$counter +1}]
+			set image [lindex $argv $counter]
+			
+		}
+		if { [lindex $argv $counter] == "--script" }  {
+			set counter [expr {$counter +1}]
+			set script [lindex $argv $counter]
+			
+		}
+		set counter [expr {$counter +1}]
+	}
+}
+
+#
+# Try and read password from a file called ~/bin/.minix.passwd
+# if that is not present inform the user we are using a default
+# password. (This becomes nasty when we have ssh installed)
+#
+if { [file exists "~/bin/.minix.passwd" ] == 1} {
+        puts "**Reading password from file **"
+        set fd [open "~/bin/.minix.passwd" "r"]
+        set passwd [read $fd]
+        close $fd
+} 
+
+proc exit_strategy {} {
+	global qemu
+	set spawn_id $qemu
+	puts "\nExit strategy\n"
+	set timeout 5
+	send "shutdown\n"
+	expect  {
+		"Choose an option; RETURN for default; SPACE to stop countdown." { 
+			puts "\nProper shutdown after failed test\n"
+			exit 1
+		}
+		"Press Ctrl-B to configure iPXE" {
+			puts "\nProper shutdown after failed test\n"
+			exit 1
+			
+		}
+	}
+	exit 1
+}
+
+spawn qemu-system-x86_64 --enable-kvm -m 2048 -hda $image -curses -net nic,model=e1000 -net user -redir tcp:8888::22
+set qemu $spawn_id
+
+#
+#--- Welcome to MINIX 3. This is the boot monitor. ---
+#expect "\\-\\-\\- Welcome to MINIX 3. This is the boot monitor. \\-\\-\\-"
+
+#
+#Check we have a normal boot loader
+#1. Start MINIX 3
+expect "1. Start MINIX 3"
+
+expect "Choose an option; RETURN for default; SPACE to stop countdown." {
+	send "\n"
+}
+
+
+# when this script is stated the previous one probably has installed openssh
+# and ssh keys will be generated
+set timeout 120
+
+#
+for {} 1 {} {
+	puts "Waiting for a prompt"
+	expect {
+		#minix login: 
+		#but later if it worked ip-address login:
+		"login:" { 
+			send "root\n" 
+			break
+		}
+		"dirty, performing fsck" {puts "resetting timeout as the file system in dirty" }
+		timeout {
+			puts "Failed to catch login command"
+			exit_strategy
+		}
+	}
+}
+
+set timeout 20
+expect {
+	"Password:" { 
+		send -h "$passwd\n" 
+	}
+	timeout {
+		puts "Failed to catch login command"
+		exit_strategy
+	}
+}
+
+set timeout 5
+expect "#"
+
+
+#proc run {args} {
+#	set status [catch { exec -ignorestderr /bin/sh -c "$args" } msg ]
+#	if {$status != 0} {
+#		puts "STATUS($args) $status\n"
+#		exit_strategy 
+#	}
+#}
+
+proc run {args} {
+        global errorCode
+
+	set fd [open "|/bin/sh -c \"$args\"" r+]
+        #set fd [open "|/bin/sh $args 2>&1" r+]
+        while { [gets $fd data] >= 0 } {
+          puts $data
+        }
+        
+        if {[catch {close $fd} err]} {
+                if {"CHILDSTATUS" == [lindex $errorCode 0]} {
+                        set exit_status [lindex $errorCode 2]
+                        puts "exit status for cmd '$args' ($exit_status) $err\n"
+			exit_strategy 
+                }
+        }
+}
+
+proc run_on_device {args} {
+	run sshpass -p dev ssh -p 8888 root@127.0.0.1 -o NoHostAuthenticationForLocalhost=yes $args
+}
+
+#$run_on_device rm -rf /root/packages
+#run sshpass -p dev scp  -P 8888  -o NoHostAuthenticationForLocalhost=yes -r packages root@127.0.0.1:/root/
+#run_on_device $script
+run $script
+
+set spawn_id $qemu
+
+
+set timeout 20
+send -h "shutdown\n"
+expect  {
+	"Choose an option; RETURN for default; SPACE to stop countdown." { 
+		puts "\nTest worked\n"
+		exit 0
+	}
+	"Press Ctrl-B to configure iPXE" {
+		puts "\nWorked\n"
+		exit 0
+		
+	}
+}
+exit 1

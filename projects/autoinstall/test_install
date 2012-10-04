@@ -1,0 +1,8 @@
+#!/bin/sh
+set -e
+set -x
+cat minix3_2_1_ide_copy.iso.bz2 | bunzip2 > minix-dev.iso
+script/02_qemu_minix_base.install.expect -- --image test.img --cdrom minix-dev.iso 
+post-install/02-setup.expect -- --image test.img 
+post-install/03-password.expect -- --image test.img 
+script/04-run-script.expect -- --image test.img --script post-install/prepare_for_running_test.sh

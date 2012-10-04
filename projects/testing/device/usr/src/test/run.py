@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2.7
 #
 # Alternative to the run shell script that formats the output
 # in a machine redeable form (xml unit test) format.
@@ -85,9 +85,9 @@ class PosixTests(unittest.TestCase):
 def test_generator(a, b):
     def test(self):
 	if os.geteuid() == 0:
-        	value = os.system('su - bin -c "cd `pwd`; ./%s >>k"' % b)
+        	value = os.system('su - bin -c "cd `pwd`; ./%s >>/tmp/k"' % b)
 	else:
-        	value = os.system('./%s >>k' % b)
+        	value = os.system('./%s >>/tmp/k' % b)
         self.assertEqual(value,0)
     return test
 
