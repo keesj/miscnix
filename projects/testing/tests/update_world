@@ -1,6 +1,6 @@
 #!/bin/sh
-set -x
-set -e
+#set -x
+#set -e
 
 
 MYSCP="sshpass -p dev scp  -P 8888  -o NoHostAuthenticationForLocalhost=yes"

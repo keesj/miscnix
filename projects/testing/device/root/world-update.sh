@@ -6,7 +6,7 @@ then
 fi
 
 set -x
-set -e
+#set -e
 cd /usr/src
 git reset --hard
 git pull
