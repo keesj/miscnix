@@ -92,6 +92,8 @@ def test_generator(a, b):
     return test
 
 if __name__ == '__main__':
+    if os.geteuid() == 0:
+       	os.system('chown bin .')
     for t in tests:
         test_name = 'test_%s' % t[0]
         test = test_generator(t[0], t[1])

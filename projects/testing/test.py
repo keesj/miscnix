@@ -7,20 +7,20 @@ import xmlrunner
 class BasicTests(unittest.TestCase):
 
     def test_base_image_boots(self):
-	self.value = os.system("./tests/device_boots --image test.img")
-	self.assertEqual(self.value,0)
+	value = os.system("./tests/device_boots --image test.img")
+	self.assertEqual(value,0)
 
     def test_update_world(self):
-	self.value = os.system("../autoinstall/script/04-run-script.expect -- --image test.img --script ./tests/update_world")
-	self.assertEqual(self.value,0)
+	value = os.system("../autoinstall/script/04-run-script.expect -- --image test.img --script ./tests/update_world")
+	self.assertEqual(value,0)
 
     def test_updated_image_boots(self):
-	self.value = os.system("./tests/device_boots --image test.img")
-	self.assertEqual(self.value,0)
+	value = os.system("./tests/device_boots --image test.img")
+	self.assertEqual(value,0)
 
     def test_run_posix_tests(self):
-	self.value = os.system("../autoinstall/script/04-run-script.expect -- --image test.img --script ./tests/run_posix_tests")
-	self.assertEqual(self.value,0)
+	value = os.system("../autoinstall/script/04-run-script.expect -- --image test.img --script ./tests/run_posix_tests")
+	self.assertEqual(value,0)
 
 if __name__ == '__main__':
     os.system("rm -rf test.img")
