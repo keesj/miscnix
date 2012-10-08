@@ -1,0 +1,5 @@
+[gerrit]
+host=gerrit-minix.few.vu.nl
+port=2222
+project=minix
+defaultbranch=master

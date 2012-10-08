@@ -17,4 +17,4 @@ then
 else 
 	git checkout master
 fi
-make clean world 
+make clean world  2>&1

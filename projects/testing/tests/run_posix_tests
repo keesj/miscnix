@@ -13,4 +13,11 @@ if $MYSSH "cd /usr/src/test ; ./run.py"
 then
 	echo "some tests failed $?"
 fi
+#
+# Run again for the console output
+#
+if $MYSSH "cd /usr/src/test ; ./run"
+then
+	echo "some tests failed $?"
+fi
 $MYSCP root@127.0.0.1:/usr/src/test/test-reports/* test-reports/
