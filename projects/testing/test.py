@@ -3,8 +3,13 @@ import random
 import os
 import unittest
 import xmlrunner
+from time import sleep
 
 class BasicTests(unittest.TestCase):
+    def setUp(self):
+        while os.system("netstat -na | grep 8888 1>/dev/null") == 0:
+            print "Waiting from port 8888 to be free"
+	    sleep(1)
 
     def test_base_image_boots(self):
 	value = os.system("./tests/device_boots --image test.img")
