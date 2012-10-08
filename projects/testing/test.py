@@ -11,19 +11,19 @@ class BasicTests(unittest.TestCase):
             print "Waiting from port 8888 to be free"
 	    sleep(1)
 
-    def test_base_image_boots(self):
+    def test_01_base_image_boots(self):
 	value = os.system("./tests/device_boots --image test.img")
 	self.assertEqual(value,0)
 
-    def test_update_world(self):
+    def test_02_update_world(self):
 	value = os.system("../autoinstall/script/04-run-script.expect -- --image test.img --script ./tests/update_world")
 	self.assertEqual(value,0)
 
-    def test_updated_image_boots(self):
+    def test_03_updated_image_boots(self):
 	value = os.system("./tests/device_boots --image test.img")
 	self.assertEqual(value,0)
 
-    def test_run_posix_tests(self):
+    def test_04_run_posix_tests(self):
 	value = os.system("../autoinstall/script/04-run-script.expect -- --image test.img --script ./tests/run_posix_tests")
 	self.assertEqual(value,0)
 
