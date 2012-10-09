@@ -10,15 +10,15 @@ import xmlrunner
 
 # [ "test name", "command to run" ]
 tests = [
-	["1","test1"],
-	["2","test2"],
-	["3","test3"],
-	["4","test4"],
-	["5","test5"],
-	["6","test6"],
-	["7","test7"],
-	["8","test8"],
-	["9","test9"],
+	["01","test1"],
+	["02","test2"],
+	["03","test3"],
+	["04","test4"],
+	["05","test5"],
+	["06","test6"],
+	["07","test7"],
+	["08","test8"],
+	["09","test9"],
 	["10","test10"],
 	["11","test11"],
 	["12","test12"],
@@ -73,9 +73,9 @@ tests = [
 	["61","test61"],
 	["62","test62"],
 #	["63","test63"],
-	["sh1.sh","testsh1.sh"],
-	["sh2.sh","testsh2.sh"],
-	["interp.sh","testinterp.sh"],
+	["64","testsh1.sh"],
+	["65","testsh2.sh"],
+	["66","testinterp.sh"],
   ]
 
 class PosixTests(unittest.TestCase):
