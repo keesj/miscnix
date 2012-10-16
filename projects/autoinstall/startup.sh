@@ -80,7 +80,6 @@ then
 	rm -rf $MULTIBOOT_DEST_DIR
 	mkdir -p $MULTIBOOT_DEST_DIR
 	cp $MULTIBOOT_SOURCE_DIR/* $MULTIBOOT_DEST_DIR
-	for i in $MULTIBOOT_DEST_DIR/mod*.gz ; do gunzip $i ; done
 
 	#
 	# The modules initially don't have access to the kernel command line so
