@@ -1,8 +1,18 @@
 #!/bin/sh
 
-DISK_IMAGE=minix.dev-postinst.8g.img
-INSTANCE_NUMBER=1
-MULTIBOOT_SOURCE_DIR=""
+if [ -z "$DISK_IMAGE" ] 
+then
+	DISK_IMAGE=minix.dev-postinst.8g.img
+fi
+if [ -z "$INSTANCE_NUMBER" ] 
+then
+	INSTANCE_NUMBER=1
+fi
+
+if [ -z "$MULTIBOOT_SOURCE_DIR" ] 
+then
+	MULTIBOOT_SOURCE_DIR=""
+fi
 
 if [ -f .settings ]
 then

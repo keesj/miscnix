@@ -17,4 +17,7 @@ then
 else 
 	git checkout master
 fi
-make clean world  2>&1
+#echo  "PATH=$PATH"
+export PATH=/usr/bin:/bin:/usr/pkg/bin:/usr/local/bin:/sbin:/usr/sbin
+#/root/bin:/usr/local/bin:/bin:/sbin:/usr/bin:/usr/sbin:/usr/pkg/bin:/usr/pkg/sbin:/usr/pkg/X11R6/bin
+make clean world 2>&1

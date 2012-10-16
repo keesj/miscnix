@@ -44,8 +44,9 @@ tail -f script.log | while read line
 do
 	if [ -f done ] 
 	then
-		#@TODO only kill the $current tail...
-		killall tail
+		#@TODO only kill the $current tail by getting the tail attached to the current
+		#ppid
+		ps h --ppid $$ | grep tail | awk '{print $1}' | xargs --no-run-if-empty kill
 		exit
 	fi
 	echo $line
