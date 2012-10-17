@@ -1,0 +1,11 @@
+#!/bin/sh
+#set -x
+#set -e
+
+
+MYSCP="sshpass -p dev scp  -P 8888  -o NoHostAuthenticationForLocalhost=yes"
+MYSSH="sshpass -p dev ssh -p 8888 root@127.0.0.1 -o NoHostAuthenticationForLocalhost=yes"
+
+$MYSCP -r device/* root@127.0.0.1:/
+$MYSSH /root/create-iso.sh
+$MYSCP root@127.0.0.1:/usr/src/relasetools/minix3_2_1_ide_copy.iso.bz2 .

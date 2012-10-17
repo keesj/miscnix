@@ -60,6 +60,11 @@ then
 fi
 
 
+#Use serial
+#See http://wiki.minix3.org/en/DevelopersGuide/SerialOut
+#cttyline=0 cttybaud=115200
+
+
 #
 # if the MULTIBOOT_SOURCE_DIR is given (and is a directory) copy the files to a
 # new directory called multiboot.
