@@ -5,19 +5,22 @@ then
 	exit 1
 fi
 
+VERSION=master
+while [ $# -gt 0 ]
+do
+    case "$1" in
+	-version) VERSION="$2"; shift;;
+	*)  break;;	# terminate while loop
+    esac
+    shift
+done
+
 set -x
-#set -e
 cd /usr/src
+git review -s
+git fetch gerrit
 git reset --hard
-git pull
-#if we don't have a local checkout create one
-if ! git branch | grep master 2>&1 > /dev/null
-then
-	git checkout -t origin/master
-else 
-	git checkout master
-fi
-#echo  "PATH=$PATH"
+git checkout $VERSION
 export PATH=/usr/bin:/bin:/usr/pkg/bin:/usr/local/bin:/sbin:/usr/sbin
 #/root/bin:/usr/local/bin:/bin:/sbin:/usr/bin:/usr/sbin:/usr/pkg/bin:/usr/pkg/sbin:/usr/pkg/X11R6/bin
 make clean world 2>&1

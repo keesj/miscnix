@@ -7,4 +7,4 @@ MYSCP="sshpass -p dev scp  -P 8888  -o NoHostAuthenticationForLocalhost=yes"
 MYSSH="sshpass -p dev ssh -p 8888 root@127.0.0.1 -o NoHostAuthenticationForLocalhost=yes"
 
 $MYSCP -r device/* root@127.0.0.1:/
-$MYSSH /root/world-update.sh
+$MYSSH /root/world-update.sh -version "$GIT_COMMIT"
