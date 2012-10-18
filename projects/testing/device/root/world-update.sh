@@ -20,11 +20,8 @@ cd /usr/src
 #git config --global user.name jenkins3
 #git config --global user.email jenkins@keesj.dds.nl
 git config --global --add gitreview.username "jenkins3"
-
 git review -s
-git fetch gerrit
-git reset --hard
-git checkout $VERSION
+git review -d $VERSION
 export PATH=/usr/bin:/bin:/usr/pkg/bin:/usr/local/bin:/sbin:/usr/sbin
 #/root/bin:/usr/local/bin:/bin:/sbin:/usr/bin:/usr/sbin:/usr/pkg/bin:/usr/pkg/sbin:/usr/pkg/X11R6/bin
 make clean world 2>&1
