@@ -17,6 +17,10 @@ done
 
 set -x
 cd /usr/src
+#git config --global user.name jenkins3
+#git config --global user.email jenkins@keesj.dds.nl
+git config --global --add gitreview.username "jenkins3"
+
 git review -s
 git fetch gerrit
 git reset --hard
