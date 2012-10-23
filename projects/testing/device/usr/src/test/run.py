@@ -72,7 +72,7 @@ tests = [
 	["60","test60"],
 	["61","test61"],
 	["62","test62"],
-#	["63","test63"],
+	["63","test63 `pwd`/mod"],
 	["64","testsh1.sh"],
 	["65","testsh2.sh"],
 	["66","testinterp.sh"],
