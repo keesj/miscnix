@@ -7,7 +7,7 @@ from time import sleep
 
 class BasicTests(unittest.TestCase):
     def setUp(self):
-        while os.system("netstat -na | grep 8888 1>/dev/null") == 0:
+        while os.system("netstat -na | grep LIST | grep tcp | grep 8888 1>/dev/null") == 0:
             print "Waiting from port 8888 to be free"
 	    sleep(1)
 
