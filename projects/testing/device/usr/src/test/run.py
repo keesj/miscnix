@@ -85,10 +85,10 @@ class PosixTests(unittest.TestCase):
 def test_generator(a, b):
     def test(self):
 	if os.geteuid() == 0:
-        	value = os.system('su - bin -c "cd `pwd`; ./%s >>/tmp/k"' % b)
+        	value = os.system('su - bin -c "cd `pwd`; ./%s >>/tmp/k ; exit $?"' % b)
 	else:
-        	value = os.system('./%s >>/tmp/k' % b)
-        self.assertEqual(value,0)
+        	value = os.system('./%s >>/tmp/k ; exit $?' % b)
+        self.assertEqual(value,1)
     return test
 
 if __name__ == '__main__':
