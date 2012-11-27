@@ -55,4 +55,5 @@ do
 done
 ret=`cat done`
 rm -rf script.log done
+echo "exit value $ret"
 exit $ret
