@@ -15,6 +15,10 @@ esac
 set -x
 cd /usr/src
 
+env
+type git
+
+echo "VERSION: $VERSION"
 if [ $VERSION = "master" ]
 then
 	git checkout master
