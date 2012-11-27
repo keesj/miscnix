@@ -20,14 +20,19 @@ esac
 set -x
 cd /usr/src
 
+git clean -f -x -d  -e .gitreview
 env
 type git
 
 if [ -n  "$GITVERSION" ]
 then
+	
+	git pull
 	git checkout $GITVERSION
 fi
+
 if [ -n "$VERSION"  ]
+then
 	git config --global --add gitreview.username "jenkins3"
 	git review -s
 	git review -d $VERSION
