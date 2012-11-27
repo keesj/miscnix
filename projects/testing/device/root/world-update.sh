@@ -7,8 +7,13 @@
 export PATH=/usr/bin:/bin:/usr/pkg/bin:/usr/local/bin:/sbin:/usr/sbin
 
 VERSION=master
+GITVERSION=""
 case "$1" in
   -version) VERSION="$2";;
+   *)  break;;	# terminate while loop
+esac
+case "$2" in
+  -gitversion) GITVERSION="$3";;
    *)  break;;	# terminate while loop
 esac
 
@@ -18,16 +23,11 @@ cd /usr/src
 env
 type git
 
-if [ -z  $VERSION ]
+if [ -n  "$GITVERSION" ]
 then
-	echo empty version 
-	VERSION="master"
+	git checkout $GITVERSION
 fi
-echo "VERSION: $VERSION"
-if [ $VERSION = "master" ]
-then
-	git checkout master
-else
+if [ -n "$VERSION"  ]
 	git config --global --add gitreview.username "jenkins3"
 	git review -s
 	git review -d $VERSION
