@@ -18,7 +18,7 @@ cd /usr/src
 env
 type git
 
-if [ $VERSION = "" ]
+if [ -z  $VERSION ]
 then
 	echo empty version 
 	VERSION="master"
