@@ -4,6 +4,7 @@
 #	echo "This script should be copied to your minix installation and run in there. (exiting)"
 #	exit 1
 #fi
+export PATH=/usr/bin:/bin:/usr/pkg/bin:/usr/local/bin:/sbin:/usr/sbin
 
 VERSION=master
 case "$1" in
@@ -22,5 +23,4 @@ else
 	git review -s
 	git review -d $VERSION
 fi
-export PATH=/usr/bin:/bin:/usr/pkg/bin:/usr/local/bin:/sbin:/usr/sbin
 make build 2>&1
