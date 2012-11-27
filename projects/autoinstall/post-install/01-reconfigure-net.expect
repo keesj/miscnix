@@ -111,11 +111,9 @@ expect "#" {
 #shutdown
 send "shutdown -p\n"
 expect  {
-	"Choose an option; RETURN for default; SPACE to stop countdown." { 
+	"MINIX will now be shut down" {
 		puts "\nInstall worked\n"
-	}
-	"Press Ctrl-B to configure iPXE" {
-		puts "\nInstall worked\n"
-		
+		exit 0
 	}
 }
+exit 1

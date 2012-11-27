@@ -124,14 +124,9 @@ set timeout 20
 #shutdown
 send "shutdown -p\n"
 expect  {
-	"Choose an option; RETURN for default; SPACE to stop countdown." { 
+	"MINIX will now be shut down" {
 		puts "\nTest worked\n"
 		exit 0
-	}
-	"Press Ctrl-B to configure iPXE" {
-		puts "\nWorked\n"
-		exit 0
-		
 	}
 }
 exit 1

@@ -236,10 +236,7 @@ expect {
 
 set timeout 30
 expect  {
-	"Choose an option; RETURN for default; SPACE to stop countdown." { 
-		puts "\nInstall worked\n"
-	}
-	"Press Ctrl-B to configure iPXE" {
+	"MINIX will now be shut down" {
 		puts "\nInstall worked\n"
 	}
 	timeout last_chance
