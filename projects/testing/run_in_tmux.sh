@@ -13,6 +13,7 @@
 # @TODO use tmp files for the scripts
 #
 echo "#!/bin/sh
+stty raw
 dir=`pwd`
 $@  2>&1  > \${dir}/script.log
 echo \$?  > \${dir}/done
@@ -47,6 +48,7 @@ do
 		#@TODO only kill the $current tail by getting the tail attached to the current
 		#ppid
 		ps h --ppid $$ | grep tail | awk '{print $1}' | xargs --no-run-if-empty kill
+		echo $line
 		exit
 	fi
 	echo $line
