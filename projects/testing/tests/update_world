@@ -11,4 +11,9 @@ VERSION= echo -n $GERRIT_CHANGE_URL | sed "s,.*/,,g"
 #echo $VERSION
 
 $MYSCP -r device/* root@127.0.0.1:/
-$MYSSH /root/world-update.sh -version "$VERSION" -gitversion "$GIT_COMMIT"
+if [ -n "$VERSION"  ]
+then
+	$MYSSH /root/world-update.sh -version "$VERSION"
+else 
+	$MYSSH /root/world-update.sh -gitversion "$GIT_COMMIT"
+fi

@@ -6,14 +6,11 @@
 #fi
 export PATH=/usr/bin:/bin:/usr/pkg/bin:/usr/local/bin:/sbin:/usr/sbin
 
-VERSION=master
+VERSION=""
 GITVERSION=""
 case "$1" in
   -version) VERSION="$2";;
-   *)  break;;	# terminate while loop
-esac
-case "$2" in
-  -gitversion) GITVERSION="$3";;
+  -gitversion) GITVERSION="$2";;
    *)  break;;	# terminate while loop
 esac
 
@@ -27,12 +24,14 @@ type git
 if [ -n  "$GITVERSION" ]
 then
 	
+	echo DOING GIT CHECKOUT
 	git pull
 	git checkout $GITVERSION
 fi
 
 if [ -n "$VERSION"  ]
 then
+	echo DOING GERRIT CHECKOUT
 	git config --global --add gitreview.username "jenkins3"
 	git review -s
 	git review -d $VERSION
