@@ -44,7 +44,7 @@ proc exit_strategy {} {
 	set spawn_id $qemu
 	puts "\nExit strategy\n"
 	set timeout 5
-	send "shutdown\n"
+	send "shutdown -p\n"
 	expect  {
 		"Choose an option; RETURN for default; SPACE to stop countdown." { 
 			puts "\nProper shutdown after failed test\n"
@@ -152,7 +152,7 @@ set spawn_id $qemu
 
 
 set timeout 20
-send -h "shutdown\n"
+send -h "shutdown -p\n"
 expect  {
 	"Choose an option; RETURN for default; SPACE to stop countdown." { 
 		puts "\nTest worked\n"

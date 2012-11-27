@@ -16,4 +16,6 @@ then
 	echo minix3_2_1_ide_copy.iso.bz Missing
 	exit 1
 fi
+echo OK $ISOBZ was found
+echo
 exit 0

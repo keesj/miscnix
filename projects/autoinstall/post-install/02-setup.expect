@@ -137,7 +137,7 @@ expect {
 }
 set timeout 20
 #shutdown
-send "shutdown\n"
+send "shutdown -p\n"
 expect  {
 	"Choose an option; RETURN for default; SPACE to stop countdown." { 
 		puts "\nInstall worked\n"

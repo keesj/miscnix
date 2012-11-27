@@ -18,6 +18,11 @@ cd /usr/src
 env
 type git
 
+if [ $VERSION = "" ]
+then
+	echo empty version 
+	VERSION="master"
+fi
 echo "VERSION: $VERSION"
 if [ $VERSION = "master" ]
 then
