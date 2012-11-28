@@ -205,7 +205,7 @@ puts "\nGrumble\n"
 #Ethernet card? [6] 
 set step  "step 8 ethernet card"
 expect {
-	"Ethernet card?" { send -h "\n"}
+	"Ethernet card?" {  sleep 2 ; send -h "\n"}
 	 timeout last_chance
 }
 #Configure network using DHCP or manually?                                       
