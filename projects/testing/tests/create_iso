@@ -6,16 +6,16 @@
 MYSCP="sshpass -p dev scp  -P 8888  -o NoHostAuthenticationForLocalhost=yes"
 MYSSH="sshpass -p dev ssh -p 8888 root@127.0.0.1 -o NoHostAuthenticationForLocalhost=yes"
 
-ISOBZ=minix3_2_1_ide_copy.iso.bz
+ISOBZ=minix3_2_1_ide_copy.iso.bz2
 rm -f $ISOBZ
 $MYSCP -r device/* root@127.0.0.1:/
 $MYSSH /root/create-iso.sh
 $MYSCP root@127.0.0.1:/usr/src/releasetools/$ISOBZ .
 if [ ! -e $ISOBZ ]
 then
-	echo minix3_2_1_ide_copy.iso.bz Missing
+	echo "$ISOBZ Missing."
 	exit 1
 fi
-echo OK $ISOBZ was found
+echo "OK $ISOBZ was found"
 echo
 exit 0
