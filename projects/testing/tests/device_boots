@@ -34,7 +34,7 @@ if { [file exists "~/bin/.minix.passwd" ] == 1} {
 
 proc last_chance {} {
 	puts "\nExit strategy\n"
-	send "shutdown -p\n"
+	send "poweroff\n"
 	set timeout 5
 	exit 1
 }
@@ -122,7 +122,7 @@ expect {
 expect -re $
 set timeout 20
 #shutdown
-send "shutdown -p\n"
+send "poweroff\n"
 expect  {
 	"MINIX will now be shut down" {
 		puts "\nTest worked\n"

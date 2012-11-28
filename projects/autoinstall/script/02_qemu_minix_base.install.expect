@@ -231,7 +231,7 @@ expect {
 # 
 set step  "shutdown"
 expect {
-	"with a password.  Please consult the usage manual for more information." { send -h "\nshutdown -p\n" }
+	"with a password.  Please consult the usage manual for more information." { send -h "\npoweroff\n" }
 	 timeout last_chance
 }
 	
