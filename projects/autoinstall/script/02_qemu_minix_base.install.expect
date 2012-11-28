@@ -37,7 +37,9 @@ set step "initial"
 proc last_chance {} {
 	global step
 	puts "\n(Step $step):Last chance\n"
-	interact
+	puts "\nExit from last chance\n"
+	exit 1
+	#interact
 }
 
 # Remove the previous install
@@ -168,7 +170,7 @@ for {} 1 {} {
 }
 
 
-set timeout 800
+set timeout 10000
 set step "installing files"
 for {} 1 {} {
 	expect {
