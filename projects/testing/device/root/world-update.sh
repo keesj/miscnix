@@ -18,9 +18,7 @@ set -x
 cd /usr/src
 
 git clean -f -x -d  -e .gitreview
-env
-type git
-
+git reset --hard
 if [ -n  "$GITVERSION" ]
 then
 	
