@@ -11,7 +11,7 @@ rm -f $ISOBZ
 $MYSCP -r device/* root@127.0.0.1:/
 $MYSSH /root/create-iso.sh
 $MYSCP root@127.0.0.1:/usr/src/releasetools/$ISOBZ .
-if [ ! $ISOBZ ]
+if [ ! -e $ISOBZ ]
 then
 	echo minix3_2_1_ide_copy.iso.bz Missing
 	exit 1
