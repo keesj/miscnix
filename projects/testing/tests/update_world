@@ -7,7 +7,7 @@ MYSCP="sshpass -p dev scp  -P 8888  -o NoHostAuthenticationForLocalhost=yes"
 MYSSH="sshpass -p dev ssh -p 8888 root@127.0.0.1 -o NoHostAuthenticationForLocalhost=yes"
 
 #GERRIT_CHANGE_URL="http://gerrit-minix.few.vu.nl/81"
-VERSION= echo -n $GERRIT_CHANGE_URL | sed "s,.*/,,g"
+VERSION=`echo -n $GERRIT_CHANGE_URL | sed "s,.*/,,g"`
 #echo $VERSION
 
 $MYSCP -r device/* root@127.0.0.1:/
