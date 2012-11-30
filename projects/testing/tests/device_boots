@@ -84,6 +84,10 @@ expect {
 	"Password:" { 
 		send -h "$passwd\n" 
 	}
+        "#" {
+                puts "No password needed\n"
+                send "\n"
+        }
 	timeout {
 		puts "Failed to catch login command"
 		last_chance
