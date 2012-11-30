@@ -182,7 +182,6 @@ for {} 1 {} {
 	}
 }
 
-puts "\nGrumble\n" 
 # Ethernet card?
 #--- Step 8: Select your Ethernet chip ---------------------------------
 #
@@ -222,6 +221,7 @@ expect {
 #Please type 'shutdown' to exit MINIX 3 and reboot. To boot into your new        
 #system, you might have to remove installation media.                            
 # 
+puts "\nOK install worked\n" 
 # This ends the MINIX 3 setup script.  After booting your newly set up system,    
 # you can run the test suites as indicated in the setup manual.  You also         
 # may want to take care of local configuration, such as securing your system      
@@ -240,6 +240,9 @@ set timeout 30
 expect  {
 	"MINIX will now be shut down" {
 		puts "\nInstall worked\n"
+		exit 0
 	}
 	timeout last_chance
 }
+puts "\nsystem dyd not shutdown\n"
+exit 1

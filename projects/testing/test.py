@@ -35,6 +35,9 @@ class BasicTests(unittest.TestCase):
 	value = os.system("./tests/install_iso")
 	self.assertEqual(value,0)
 
+    def test_07_installed_image_boots(self):
+	value = os.system("./tests/device_boots --image install_test.img")
+	self.assertEqual(value,0)
 
 if __name__ == '__main__':
     os.system("rm -rf test.img")
