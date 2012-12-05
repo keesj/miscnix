@@ -30,6 +30,7 @@ fi
 if [ -n "$VERSION"  ]
 then
 	echo DOING GERRIT CHECKOUT
+	export USERNAME=jenkins3
 	git config --global --add gitreview.username "jenkins3"
 	git review -s
 	git review -d $VERSION
