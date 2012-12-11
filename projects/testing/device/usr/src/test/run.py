@@ -12,7 +12,8 @@ import xmlrunner
 tests = [
 	["01","test1"],
 	["02","test2"],
-	["03","test3"],
+# disabled on 11 2012 by keesj
+#	["03","test3"],
 	["04","test4"],
 	["05","test5"],
 	["06","test6"],
@@ -45,13 +46,15 @@ tests = [
 	["33","test33"],
 	["34","test34"],
 	["35","test35"],
-	["36","test36"],
+# disabled on 11 2012 by keesj
+#	["36","test36"],
 	["37","test37"],
 	["38","test38"],
 	["39","test39"],
 	["40","test40"],
 	["41","test41"],
-	["42","test42"],
+# disabled on 11 2012 by keesj
+#	["42","test42"],
 	["43","test43"],
 	["44","test44"],
 	["45","test45"],

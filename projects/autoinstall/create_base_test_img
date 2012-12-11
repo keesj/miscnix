@@ -3,6 +3,7 @@ set -e
 set -x
 rm -f *.bz2
 IMG=minix3_2_1_ide_20121207_1118489.iso.bz2
+
 wget http://www.minix3.org/iso/${IMG}
 cat ${IMG} | bunzip2 > minix-dev.iso
 script/02_qemu_minix_base.install.expect -- --image test.img --cdrom minix-dev.iso 

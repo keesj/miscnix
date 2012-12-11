@@ -3,8 +3,8 @@ set -x
 set -e
 
 
-MYSCP="sshpass -p dev scp  -P 8888  -o NoHostAuthenticationForLocalhost=yes"
-MYSSH="sshpass -p dev ssh -p 8888 root@127.0.0.1 -o NoHostAuthenticationForLocalhost=yes"
+MYSCP="sshpass -p dev scp  -P 8888  -o NoHostAuthenticationForLocalhost=yes -o PubkeyAuthentication=no"
+MYSSH="sshpass -p dev ssh -p 8888 root@127.0.0.1 -o NoHostAuthenticationForLocalhost=yes -o PubkeyAuthentication=no "
 
 $MYSSH rm -rf packages
 $MYSCP -r device/* root@127.0.0.1:/
