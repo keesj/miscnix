@@ -33,7 +33,7 @@ USB_DISK_PARAMS="-drive id=my_usb_disk,file=usbdisk.img,if=none  -device usb-sto
 
 
 port_bound(){
-	if netstat -na  | grep "tcp[^6].*LISTEN"  | awk '{print $4}' | sed "s,.*:,,g" | grep "$1\$" 1>/dev/null
+	if netstat -na  | grep "tcp.*LISTEN"  | awk '{print $4}' | sed "s,.*:,,g" | grep "$1\$" 1>/dev/null
 	then
 		return 1
 	fi
@@ -44,7 +44,7 @@ port_bound(){
 # portable as it assumes output from netstat
 #tcp        0      0 0.0.0.0:9418            0.0.0.0:*               LISTEN     
 #
-for i in `seq 0 1 10`
+for i in `seq $INSTANCE_NUMBER 1 10`
 do
 	if port_bound $((4444 + $i))
 	then
