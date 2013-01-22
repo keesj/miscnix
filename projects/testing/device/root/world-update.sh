@@ -17,14 +17,16 @@ esac
 set -x
 cd /usr/src
 
-git clean -f -x -d  -e .gitreview
+git clean -f -x -d 
 git reset --hard
+git checkout .
 if [ -n  "$GITVERSION" ]
 then
 	
-	echo DOING GIT CHECKOUT
+	echo "DOING GIT CHECKOUT $GITVERSION"
 	git pull
 	git checkout $GITVERSION
+	git status
 fi
 
 if [ -n "$VERSION"  ]
