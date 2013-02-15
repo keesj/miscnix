@@ -6,7 +6,7 @@ then
 fi
 if [ -z "$INSTANCE_NUMBER" ] 
 then
-	INSTANCE_NUMBER=1
+	INSTANCE_NUMBER=0
 fi
 
 if [ -z "$MULTIBOOT_SOURCE_DIR" ] 
@@ -121,7 +121,7 @@ then
 fi
 
 
-SSH_PORT=$((2222 + $INSTANCE_NUMBER))
+SSH_PORT=$((3222 + $INSTANCE_NUMBER))
 MONITOR_PORT=$((4444 + $INSTANCE_NUMBER))
 
 if ! port_bound $SSH_PORT
@@ -149,7 +149,7 @@ fi
 # Currently 512 MB is needed to start with networking 1024 is needed to compile
 # clang....
 #
-# start qemu with port redirection so sshing to localhost 2222 will ssh into
+# start qemu with port redirection so sshing to localhost 3222 will ssh into
 # the qemu instance also start the monitor on port 4444 so we can telnet to it.
 
 echo "starting ${DISK_IMAGE} qemu instance ${INSTANCE_NUMBER} with ssh port ${SSH_PORT} and monitor on port ${MONITOR_PORT}"
@@ -161,7 +161,8 @@ sleep 2
 #
 #QEMU_PARAMS="$QEMU_PARAMS -net nic,model=e1000"
 
-cmd="qemu-system-i386 -curses -localtime -redir tcp:$SSH_PORT::22 -m 2048  $QEMU_PARAMS -monitor telnet::$MONITOR_PORT,server,nowait -hda $DISK_IMAGE"
+#cmd="qemu-system-i386 -curses -localtime -redir tcp:$SSH_PORT::22 -m 2048  $QEMU_PARAMS -monitor telnet::$MONITOR_PORT,server,nowait -hda $DISK_IMAGE"
+cmd="qemu-system-x86_64 -curses -localtime -redir tcp:$SSH_PORT::22 -m 2048  $QEMU_PARAMS -monitor telnet::$MONITOR_PORT,server,nowait -hda $DISK_IMAGE"
 #
 # I don't actually know why I need the eval here ..
 echo $cmd
