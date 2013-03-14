@@ -76,13 +76,22 @@ tests = [
 	["61","test61"],
 	["62","test62"],
 	["63","test63 `pwd`/mod"],
-	["64","testsh1.sh"],
-	["65","testsh2.sh"],
-	["66","testinterp.sh"],
+	["64","test64"],
+  	["65","test65"],
+	["66","test66"],
+	["67","test67"],
+	["68","test68"],
+	["69","testsh1.sh"],
+	["70","testsh2.sh"],
+	["71","testinterp.sh"],
+
   ]
 
 class PosixTests(unittest.TestCase):
     def setUp(self):
+	if os.geteuid() == 0:
+		os.system("chown root  test11 test33 test43 test44 test46 test56 test60 test61 test65")
+		os.system("chmod 4755  test11 test33 test43 test44 test46 test56 test60 test61 test65")
         os.system("rm -rf DIR*")
 
 def test_generator(a, b):
