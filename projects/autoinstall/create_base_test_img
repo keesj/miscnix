@@ -2,10 +2,14 @@
 set -e
 set -x
 rm -f *.bz2
-#IMG=minix3_2_1_ide_20121207_1118489.iso.bz2
-IMG=minix3_2_1_ide_20130215_d6be972.iso.bz2
 
-wget http://www.minix3.org/download/${IMG}
+
+IMG=minix3_2_1_ide_copy.iso.bz2
+#IMG=minix3_2_1_ide_20130215_972156d.iso.bz2
+#wget http://www.minix3.org/download/${IMG}
+
+scp dellpc132:/var/lib/jenkins/jobs/minix-master-native/workspace/miscnix/projects/testing/${IMG} .
+
 cat ${IMG} | bunzip2 > minix-dev.iso
 script/02_qemu_minix_base.install.expect -- --image test.img --cdrom minix-dev.iso 
 post-install/02-setup.expect -- --image test.img 
