@@ -3,7 +3,7 @@ set -e
 set -x
 rm -f install_test.img
 rm -f minix-dev.iso
-ISOBZ=minix3_2_1_ide_copy.iso.bz2
+ISOBZ=minix3_3_0_ide_copy.iso.bz2
 if [ ! -e $ISOBZ ] 
 then
 	echo "$ISOBZ is missing"
