@@ -43,8 +43,8 @@ class BasicTests(unittest.TestCase):
 	self.assertEqual(value,0)
 
 if __name__ == '__main__':
-    #os.system("rm -rf test.img")
-    #os.system("cp /apts/data/test.img test.img")
-    #os.system("rm -rf test-reports");
-    #os.system("mkdir test-reports");
+    os.system("rm -rf test.img")
+    os.system("cp /apts/data/test.img test.img")
+    os.system("rm -rf test-reports");
+    os.system("mkdir test-reports");
     unittest.main(testRunner=xmlrunner.XMLTestRunner(output='test-reports'))
