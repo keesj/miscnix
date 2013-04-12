@@ -8,6 +8,7 @@ set image minix.postinst.8g.tmp.img
 set send_human {.1 .3 1 .05 2}
 set passwd "dev"
 set script "dev"
+set p "8888"
 set timeout 5
 
 if { $argc > 0 } {
@@ -21,6 +22,11 @@ if { $argc > 0 } {
 		if { [lindex $argv $counter] == "--script" }  {
 			set counter [expr {$counter +1}]
 			set script [lindex $argv $counter]
+			
+		}
+		if { [lindex $argv $counter] == "-p" }  {
+			set counter [expr {$counter +1}]
+			set p [lindex $argv $counter]
 			
 		}
 		set counter [expr {$counter +1}]
@@ -54,7 +60,7 @@ proc exit_strategy {} {
 	exit 1
 }
 
-spawn qemu-system-x86_64 --enable-kvm -m 2048 -hda $image -curses -net nic,model=e1000 -net user -redir tcp:8888::22
+spawn qemu-system-x86_64 --enable-kvm -m 2048 -hda $image -curses -net nic,model=e1000 -net user -redir tcp:${p}::22
 set qemu $spawn_id
 
 #
@@ -141,7 +147,7 @@ proc run_on_device {args} {
 #$run_on_device rm -rf /root/packages
 #run sshpass -p dev scp  -P 8888  -o NoHostAuthenticationForLocalhost=yes -r packages root@127.0.0.1:/root/
 #run_on_device $script
-run $script
+run $script -p $p
 
 set spawn_id $qemu
 

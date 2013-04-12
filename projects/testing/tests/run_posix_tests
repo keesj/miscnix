@@ -2,9 +2,25 @@
 set -x
 set -e
 
+port=8888
+while [ "$1" != "" ] 
+do
+        case $1 in
+        -p)
+                port=$2
+                shift
+                ;;
+        *)
+                echo "usage -p [number]"
+                exit 1
+                ;;
+        esac
+        shift
+done
 
-MYSCP="sshpass -p dev scp  -P 8888  -o NoHostAuthenticationForLocalhost=yes"
-MYSSH="sshpass -p dev ssh -p 8888 root@127.0.0.1 -o NoHostAuthenticationForLocalhost=yes"
+
+MYSCP="sshpass -p dev scp  -P $port  -o NoHostAuthenticationForLocalhost=yes"
+MYSSH="sshpass -p dev ssh -p $port root@127.0.0.1 -o NoHostAuthenticationForLocalhost=yes"
 
 mkdir -p test-reports
 $MYSCP -r device/* root@127.0.0.1:/
